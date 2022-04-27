@@ -5,14 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.RestaurantRepository;
-import ru.javaops.topjava2.web.EntityAdminControllerTest;
+import ru.javaops.topjava2.web.AbstractEntityAdminControllerTest;
 
 import java.util.Arrays;
 
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.*;
 import static ru.javaops.topjava2.web.user.UserTestData.ADMIN_MAIL;
 
-class RestaurantAdminControllerTest extends EntityAdminControllerTest<Restaurant> {
+class RestaurantAdminControllerTest extends AbstractEntityAdminControllerTest<Restaurant> {
 
     private static final String REST_URL = RestaurantAdminController.RESTAURANT_URL + '/';
 

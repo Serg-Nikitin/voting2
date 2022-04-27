@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class EntityAdminControllerTest<T> extends AbstractControllerTest {
+public abstract class AbstractEntityAdminControllerTest<T> extends AbstractControllerTest {
 
     public void get(String requestURL, int id , MatcherFactory.Matcher<T> matcher, T t) throws Exception {
         perform(MockMvcRequestBuilders.get(requestURL + id))
