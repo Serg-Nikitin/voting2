@@ -23,14 +23,17 @@ public class Address {
     private String country;
 
     @NoHtml
+    @NotBlank
     @Size(min = 2, max = 100)
     private String district;
 
     @NoHtml
+    @NotBlank
     @Size(min = 2, max = 100)
     private String locality;
 
     @NoHtml
+    @NotBlank
     @Size(min = 2, max = 100)
     private String street;
 

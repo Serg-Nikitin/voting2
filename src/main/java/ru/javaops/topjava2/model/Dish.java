@@ -1,7 +1,8 @@
 package ru.javaops.topjava2.model;
 
 import lombok.*;
-import org.hibernate.validator.constraints.Range;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.FutureOrPresent;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 @Table(indexes = {@Index(name = "serving_idx", columnList = "serving, restaurant_id")})
 @ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode(callSuper = true)
 public class Dish extends NamedEntity implements Serializable {
 
     @NotNull
@@ -24,16 +26,25 @@ public class Dish extends NamedEntity implements Serializable {
 
     @Column(name = "price")
     @NotNull
-    @Range(min = 10)
-    private Integer price;
+    private Double price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Restaurant restaurant;
 
-    public Dish(Integer id, String name, LocalDate dateOfServing, Integer price, Restaurant restaurant) {
+    public Dish(String name, LocalDate dateOfServing, Double price) {
+        this(null, name, dateOfServing, price);
+    }
+
+    public Dish(Integer id, String name, LocalDate dateOfServing, Double price) {
+        this(id, name, dateOfServing, price, null);
+    }
+
+    public Dish(Integer id, String name, LocalDate dateOfServing, Double price, Restaurant restaurant) {
         super(id, name);
         this.dateOfServing = dateOfServing;
         this.price = price;
         this.restaurant = restaurant;
     }
+
 }

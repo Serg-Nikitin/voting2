@@ -5,9 +5,9 @@ import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.web.MatcherFactory;
 
 public class RestaurantTestData {
-    public static final MatcherFactory.Matcher<Restaurant> RESTAURANT_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Restaurant.class, "votes");
+    public static final MatcherFactory.Matcher<Restaurant> RESTAURANT_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Restaurant.class);
 
-    public static final int RESTAURANT_ID = 1;
+    public static final Integer RESTAURANT_ID = 1;
 
     public static final Restaurant family = new Restaurant(RESTAURANT_ID, "Семейный", new Address("Россия", "Пермский край", "Пермь", "Ленина", 30));
     public static final Restaurant georgia = new Restaurant(RESTAURANT_ID + 1, "Georgia", new Address("Россия", "Пермский край", "Пермь", "Орджоникидзе", 18));
