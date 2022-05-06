@@ -3,12 +3,15 @@ package ru.javaops.topjava2.model;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import ru.javaops.topjava2.to.DishTo;
 
 import javax.persistence.*;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
+
+import static ru.javaops.topjava2.util.DishUtil.convert;
 
 @Entity
 @Getter
@@ -26,21 +29,25 @@ public class Dish extends NamedEntity implements Serializable {
 
     @Column(name = "price")
     @NotNull
-    private Double price;
+    private Integer price;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Restaurant restaurant;
 
-    public Dish(String name, LocalDate dateOfServing, Double price) {
+    public Dish(String name, LocalDate dateOfServing, Integer price) {
         this(null, name, dateOfServing, price);
     }
 
-    public Dish(Integer id, String name, LocalDate dateOfServing, Double price) {
+    public Dish(Integer id, String name, LocalDate dateOfServing, Integer price) {
         this(id, name, dateOfServing, price, null);
     }
 
-    public Dish(Integer id, String name, LocalDate dateOfServing, Double price, Restaurant restaurant) {
+    public Dish(DishTo dishTo) {
+        this(dishTo.getId(), dishTo.getName(), LocalDate.now(), convert(dishTo.getPrice()));
+    }
+
+    public Dish(Integer id, String name, LocalDate dateOfServing, Integer price, Restaurant restaurant) {
         super(id, name);
         this.dateOfServing = dateOfServing;
         this.price = price;

@@ -31,10 +31,7 @@ public class RestaurantService {
     }
 
     public Restaurant getById(int id) {
-        return findAll().stream()
-                .filter(r -> r.id() == id)
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException(String.format("Restaurant with id=%d not found", id)));
+        return repository.getById(id);
     }
 
     @Cacheable

@@ -7,12 +7,16 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.javaops.topjava2.error.IllegalRequestDataException;
-import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.service.DishService;
+import ru.javaops.topjava2.to.DishTo;
 import ru.javaops.topjava2.util.JsonUtil;
 import ru.javaops.topjava2.web.AbstractControllerTest;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,47 +38,47 @@ class AdminDishControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL + DISH_ID, RESTAURANT_ID))
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(DISH_MATCHER.contentJson(dish1));
+                .andExpect(DISH_TO_MATCHER.contentJson(new DishTo(dish1)));
     }
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     public void getAllMenu() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL, RESTAURANT_ID))
+        ResultActions action = perform(MockMvcRequestBuilders.get(REST_URL, RESTAURANT_ID))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(DISH_MATCHER.contentJson(dishesRestaurant));
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        Map<LocalDate, List<DishTo>> map = JsonUtil.readMapValues(action.andReturn().getResponse().getContentAsString());
+        assertTrue(map.equals(dishesRestaurant));
     }
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     public void update() throws Exception {
-        Dish updated = getUpdatedDish();
+        DishTo updated = new DishTo(getUpdatedDish());
         perform(MockMvcRequestBuilders.put(REST_URL + DISH_ID, RESTAURANT_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
         String msg = String.format("test, exception restaurantId=%d, dishId=%d", RESTAURANT_ID, DISH_ID);
-        DISH_MATCHER.assertMatch(service.get(RESTAURANT_ID, DISH_ID)
-                .orElseThrow(() -> new IllegalRequestDataException(msg)), getUpdatedDish());
+        DISH_TO_MATCHER.assertMatch(service.get(RESTAURANT_ID, DISH_ID), new DishTo(getUpdatedDish()));
     }
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     public void create() throws Exception {
-        Dish newDish = getNewDish();
+        DishTo newDish = new DishTo(getNewDish());
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL, RESTAURANT_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newDish)))
                 .andExpect(status().isCreated());
-        Dish created = DISH_MATCHER.readFromJson(action);
+        DishTo created = DISH_TO_MATCHER.readFromJson(action);
         Integer newId = created.getId();
         newDish.setId(newId);
-        DISH_MATCHER.assertMatch(created, newDish);
+        DISH_TO_MATCHER.assertMatch(created, newDish);
         String msg = String.format("test, exception restaurantId=%d, dishId=%d", RESTAURANT_ID, DISH_ID);
-        DISH_MATCHER.assertMatch(service.get(RESTAURANT_ID, newId)
-                .orElseThrow(() -> new IllegalRequestDataException(msg)), newDish);
+        DISH_TO_MATCHER.assertMatch(service.get(RESTAURANT_ID, newId), newDish);
     }
 
     @Test

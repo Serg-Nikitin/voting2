@@ -1,18 +1,20 @@
 package ru.javaops.topjava2.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.javaops.topjava2.error.IllegalRequestDataException;
 import ru.javaops.topjava2.model.Dish;
+import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.DishRepository;
 import ru.javaops.topjava2.repository.RestaurantRepository;
+import ru.javaops.topjava2.to.DishTo;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static ru.javaops.topjava2.util.DishUtil.checkAffiliation;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsistent;
@@ -21,7 +23,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 @Service
 @Transactional(readOnly = true)
 @Slf4j
-@CacheConfig(cacheNames = "dish")
+//@CacheConfig(cacheNames = "dish")
 public class DishService {
 
     private final DishRepository repository;
@@ -32,35 +34,49 @@ public class DishService {
         this.restaurantRepository = restaurantRepository;
     }
 
-    public Optional<Dish> get(Integer restaurantId, Integer id) {
+    public Dish getById(int id) {
+        return repository.getById(id);
+    }
+
+    public DishTo get(Integer restaurantId, Integer id) {
         return repository.findById(id)
-                .filter(dish -> restaurantId.equals(dish.getRestaurant().getId()));
+                .filter(dish -> restaurantId.equals(dish.getRestaurant().getId()))
+                .map(DishTo::new).orElseThrow(() -> new IllegalRequestDataException(String.format("Restaurant with id=%d don't have dish with id =%d", restaurantId, id)));
     }
 
-    @Cacheable
-    public List<Dish> getAll() {
-        return repository.findAll(Sort.by("dateOfServing", "name"));
+    public Map<LocalDate, List<DishTo>> getAllMenu(int restaurantId) {
+        return getAll().get(restaurantRepository.getById(restaurantId));
     }
 
-    @CacheEvict(allEntries = true)
+    //    @Cacheable
+    public Map<Restaurant, Map<LocalDate, List<DishTo>>> getAll() {
+        return repository.findAll(Sort.by("restaurant", "dateOfServing"))
+                .stream()
+                .collect(Collectors.groupingBy(Dish::getRestaurant, Collectors.groupingBy(Dish::getDateOfServing,
+                        Collectors.mapping(DishTo::new, Collectors.toList()))));
+    }
+
+    //    @CacheEvict(allEntries = true)
     public void delete(int restaurantId, int id) {
         checkAffiliation(restaurantId, id, repository.delete(restaurantId, id) == 0);
     }
 
-    @CacheEvict(allEntries = true)
+    //    @CacheEvict(allEntries = true)
     @Transactional
-    public void update(Integer restaurantId, Dish dish, int id) {
-        assureIdConsistent(dish, id);
-        boolean check = get(restaurantId, id).isEmpty();
-        checkAffiliation(restaurantId, id, check);
+    public void update(Integer restaurantId, DishTo dishTo, int id) {
+        assureIdConsistent(dishTo, id);
+        Dish dish = new Dish(dishTo);
+        dish.setRestaurant(restaurantRepository.getById(restaurantId));
         repository.save(dish);
     }
 
-    @CacheEvict(allEntries = true)
+    //    @CacheEvict(allEntries = true)
     @Transactional
-    public Dish create(int restaurantId, Dish dish) {
-        checkNew(dish);
+    public DishTo create(int restaurantId, DishTo dishTo) {
+        checkNew(dishTo);
+        Dish dish = new Dish(dishTo);
         dish.setRestaurant(restaurantRepository.getById(restaurantId));
-        return repository.save(dish);
+        Dish returnDish = repository.save(dish);
+        return new DishTo(returnDish);
     }
 }
