@@ -1,4 +1,4 @@
-package ru.javaops.topjava2.util.validation;
+package ru.javaops.topjava2.util.validation.nohtml;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
