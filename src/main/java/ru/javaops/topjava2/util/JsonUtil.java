@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static ru.javaops.topjava2.util.DishUtil.convert;
+
 @UtilityClass
 public class JsonUtil {
     private static ObjectMapper mapper;
@@ -37,10 +39,9 @@ public class JsonUtil {
             Map<String, List<Map<String, Object>>> mapStr = mapper.readValue(json, Map.class);
 
             for (Map.Entry<String, List<Map<String, Object>>> obj : mapStr.entrySet()) {
-                LocalDate key = DishUtil.convert(obj.getKey());
-                obj.getValue().stream().forEach(o -> new DishTo((int) o.get("id"), (String) o.get("name"), (Double) o.get("price")));
+                LocalDate key = convert(obj.getKey());
                 List<DishTo> value = obj.getValue().stream()
-                        .map(o -> new DishTo((int) o.get("id"), (String) o.get("name"), (Double) o.get("price"))).collect(Collectors.toList());
+                        .map(o -> new DishTo((int) o.get("id"), (String) o.get("name"), convert((String) o.get("dateOfServing")), (Double) o.get("price"))).collect(Collectors.toList());
                 map.put(key, value);
             }
             return map;

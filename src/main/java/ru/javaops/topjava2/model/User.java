@@ -6,7 +6,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.util.CollectionUtils;
 import ru.javaops.topjava2.HasIdAndEmail;
-import ru.javaops.topjava2.util.validation.NoHtml;
+import ru.javaops.topjava2.util.validation.nohtml.NoHtml;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;

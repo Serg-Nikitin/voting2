@@ -1,6 +1,5 @@
 package ru.javaops.topjava2.web.dish;
 
-import org.checkerframework.checker.units.qual.C;
 import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.to.DishTo;
 import ru.javaops.topjava2.web.MatcherFactory;
@@ -50,13 +49,20 @@ public class DishTestData {
     public static final Dish dish27 = new Dish(DISH_ID + 26, "Ризотто", LocalDate.of(2022, Month.APRIL, 21), 16900, family);
     public static final Dish dish28 = new Dish(DISH_ID + 27, "Царское блюдо", LocalDate.of(2022, Month.APRIL, 21), 78000, georgia);
 
+    public static final Dish dish29 = new Dish(DISH_ID + 28, "Оленина", LocalDate.now(), 59879, family);
+    public static final Dish dish30 = new Dish(DISH_ID + 29, "Жаркое", LocalDate.now(), 15989, georgia);
+    public static final Dish dish31 = new Dish(DISH_ID + 30, "Хаш", LocalDate.now(), 36412, odessa);
+    public static final Dish dish32 = new Dish(DISH_ID + 31, "Баранина", LocalDate.now(), 78954, clouds);
+    public static final Dish dish33 = new Dish(DISH_ID + 32, "Курник", LocalDate.now(), 78789, family);
+    public static final Dish dish34 = new Dish(DISH_ID + 33, "Омлет", LocalDate.now(), 13698, georgia);
 
-    public static List<Dish> dishes = Arrays.asList(dish1, dish2, dish3, dish4, dish5, dish6, dish7, dish8, dish9, dish10, dish11, dish12, dish13, dish14, dish15, dish16, dish17, dish18, dish19, dish20, dish21, dish22, dish23, dish24, dish25, dish26, dish27, dish28);
-    public static Map<LocalDate,List<DishTo>> dishesRestaurant = dishes.stream()
+
+    public static List<Dish> dishes = Arrays.asList(dish1, dish2, dish3, dish4, dish5, dish6, dish7, dish8, dish9, dish10, dish11, dish12, dish13, dish14, dish15, dish16, dish17, dish18, dish19, dish20, dish21, dish22, dish23, dish24, dish25, dish26, dish27, dish28, dish29, dish30, dish31, dish32, dish33, dish34);
+    public static Map<LocalDate, List<DishTo>> dishesRestaurant = dishes.stream()
             .filter(dish -> RESTAURANT_ID.equals(dish.getRestaurant().getId()))
-            .collect(Collectors.groupingBy(Dish::getDateOfServing, Collectors.mapping(DishTo::new,Collectors.toList())));
+            .collect(Collectors.groupingBy(Dish::getDateOfServing, Collectors.mapping(DishTo::new, Collectors.toList())));
 
-    public static List<Dish> getMenu(Integer restaurantId){
+    public static List<Dish> getMenu(Integer restaurantId) {
         return dishes.stream().filter(dish -> restaurantId.equals(dish.getRestaurant().getId())).sorted(Comparator.comparing(Dish::getDateOfServing).thenComparing(Dish::getId)).collect(Collectors.toList());
 
     }

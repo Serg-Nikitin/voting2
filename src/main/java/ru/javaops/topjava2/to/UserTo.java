@@ -4,7 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
 import ru.javaops.topjava2.HasIdAndEmail;
-import ru.javaops.topjava2.util.validation.NoHtml;
+import ru.javaops.topjava2.util.validation.nohtml.NoHtml;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;

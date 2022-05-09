@@ -23,8 +23,8 @@ import static ru.javaops.topjava2.util.DishUtil.convert;
 public class Dish extends NamedEntity implements Serializable {
 
     @NotNull
-    @FutureOrPresent
     @Column(name = "serving", nullable = false)
+    @FutureOrPresent
     private LocalDate dateOfServing;
 
     @Column(name = "price")
@@ -35,16 +35,12 @@ public class Dish extends NamedEntity implements Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Restaurant restaurant;
 
-    public Dish(String name, LocalDate dateOfServing, Integer price) {
-        this(null, name, dateOfServing, price);
-    }
-
     public Dish(Integer id, String name, LocalDate dateOfServing, Integer price) {
         this(id, name, dateOfServing, price, null);
     }
 
     public Dish(DishTo dishTo) {
-        this(dishTo.getId(), dishTo.getName(), LocalDate.now(), convert(dishTo.getPrice()));
+        this(dishTo.getId(), dishTo.getName(), dishTo.getDateOfServing(), convert(dishTo.getPrice()));
     }
 
     public Dish(Integer id, String name, LocalDate dateOfServing, Integer price, Restaurant restaurant) {

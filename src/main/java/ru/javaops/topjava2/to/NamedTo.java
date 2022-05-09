@@ -2,7 +2,7 @@ package ru.javaops.topjava2.to;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import ru.javaops.topjava2.util.validation.NoHtml;
+import ru.javaops.topjava2.util.validation.nohtml.NoHtml;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;

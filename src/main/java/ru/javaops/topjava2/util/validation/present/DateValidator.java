@@ -8,6 +8,6 @@ public class DateValidator implements ConstraintValidator<Present, LocalDate> {
     @Override
     public boolean isValid(LocalDate value, ConstraintValidatorContext context) {
         LocalDate now = LocalDate.now();
-        return now.compareTo(value)==0;
+        return now.compareTo(value) == 0;
     }
 }

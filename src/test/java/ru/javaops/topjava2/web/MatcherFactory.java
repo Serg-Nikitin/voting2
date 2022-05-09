@@ -6,9 +6,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import ru.javaops.topjava2.util.JsonUtil;
 
 import java.io.UnsupportedEncodingException;
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiConsumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,13 +59,6 @@ public class MatcherFactory {
             iterableAssertion.accept(actual, expected);
         }
 
-//        private void assertMatch(Map<LocalDate,T> actual, Map<LocalDate,T> expected) {
-//
-//
-//
-//        }
-
-
         public ResultMatcher contentJson(T expected) {
             return result -> assertMatch(JsonUtil.readValue(getContent(result), clazz), expected);
         }
@@ -80,11 +71,6 @@ public class MatcherFactory {
         public ResultMatcher contentJson(Iterable<T> expected) {
             return result -> assertMatch(JsonUtil.readValues(getContent(result), clazz), expected);
         }
-
-//        public ResultMatcher contentJson(Map<LocalDate,Iterable<T>> expected) {
-//            return result -> assertMatch(JsonUtil.readMapValues(getContent(result),LocalDate.class ,clazz), expected);
-//        }
-
 
         public T readFromJson(ResultActions action) throws UnsupportedEncodingException {
             return JsonUtil.readValue(getContent(action.andReturn()), clazz);

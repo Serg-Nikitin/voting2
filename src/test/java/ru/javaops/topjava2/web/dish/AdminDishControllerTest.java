@@ -49,7 +49,11 @@ class AdminDishControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
         Map<LocalDate, List<DishTo>> map = JsonUtil.readMapValues(action.andReturn().getResponse().getContentAsString());
-        assertTrue(map.equals(dishesRestaurant));
+        assertTrue(map.keySet().size() == dishesRestaurant.keySet().size());
+        for (Map.Entry<LocalDate, List<DishTo>> obj : map.entrySet()) {
+            LocalDate key = obj.getKey();
+            DISH_TO_MATCHER.assertMatch(obj.getValue(), dishesRestaurant.get(key));
+        }
     }
 
     @Test
@@ -61,7 +65,6 @@ class AdminDishControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(updated)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        String msg = String.format("test, exception restaurantId=%d, dishId=%d", RESTAURANT_ID, DISH_ID);
         DISH_TO_MATCHER.assertMatch(service.get(RESTAURANT_ID, DISH_ID), new DishTo(getUpdatedDish()));
     }
 
@@ -77,7 +80,6 @@ class AdminDishControllerTest extends AbstractControllerTest {
         Integer newId = created.getId();
         newDish.setId(newId);
         DISH_TO_MATCHER.assertMatch(created, newDish);
-        String msg = String.format("test, exception restaurantId=%d, dishId=%d", RESTAURANT_ID, DISH_ID);
         DISH_TO_MATCHER.assertMatch(service.get(RESTAURANT_ID, newId), newDish);
     }
 

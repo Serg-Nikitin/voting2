@@ -2,7 +2,7 @@ package ru.javaops.topjava2.model;
 
 
 import lombok.*;
-import ru.javaops.topjava2.util.validation.NoHtml;
+import ru.javaops.topjava2.util.validation.nohtml.NoHtml;
 
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotBlank;

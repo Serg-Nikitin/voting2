@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.javaops.topjava2.util.validation.NoHtml;
+import ru.javaops.topjava2.util.validation.nohtml.NoHtml;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
