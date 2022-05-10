@@ -4,6 +4,7 @@ package ru.javaops.topjava2.model;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.format.annotation.DateTimeFormat;
 import ru.javaops.topjava2.util.validation.present.Present;
 
 import javax.persistence.*;
@@ -22,22 +23,30 @@ public class Vote extends BaseEntity {
 
     @Column(name = "date_vote")
     @NotNull
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @Present
     private LocalDate dateVote;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @NotNull
     private Restaurant restaurant;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
 
     public Vote(LocalDate dateVote, Restaurant restaurant, User user) {
         this(null, dateVote, restaurant, user);
+    }
+
+    public Vote(Integer id, LocalDate dateVote, Restaurant restaurant) {
+        this(id, dateVote, restaurant, null);
+    }
+
+    public Vote(LocalDate dateVote, Restaurant restaurant) {
+        this(null, dateVote, restaurant, null);
     }
 
     public Vote(Integer id, LocalDate dateVote, Restaurant restaurant, User user) {
