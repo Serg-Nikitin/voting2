@@ -53,11 +53,11 @@ public class ProfileVoteController {
 
     @GetMapping
     public List<Vote> getAll(@AuthenticationPrincipal AuthUser authUser) {
-        return service.getAll(authUser.id());
+        return service.getAll(authUser.getUser());
     }
 
     @GetMapping("/{date}")
-    public ResponseEntity<Vote> getVoteThisDay(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, @AuthenticationPrincipal AuthUser authUser) {
-        return ResponseEntity.of(service.getVoteThisDay(date, authUser.id()));
+    public Vote getVoteThisDay(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, @AuthenticationPrincipal AuthUser authUser) {
+        return service.getVoteThisDay(date, authUser.getUser());
     }
 }

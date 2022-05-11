@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.topjava2.model.User;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -30,7 +31,7 @@ public class AdminUserController extends AbstractUserController {
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<User> get(@PathVariable int id) {
+    public  User get(@PathVariable int id) {
         return super.get(id);
     }
 
@@ -49,7 +50,7 @@ public class AdminUserController extends AbstractUserController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @CacheEvict(cacheNames =  {"users"}, allEntries = true)
+    @CacheEvict(cacheNames = {"users"}, allEntries = true)
     public ResponseEntity<User> createWithLocation(@Valid @RequestBody User user) {
         log.info("create {}", user);
         checkNew(user);
@@ -62,7 +63,7 @@ public class AdminUserController extends AbstractUserController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @CacheEvict(cacheNames =  {"users"}, allEntries = true)
+    @CacheEvict(cacheNames = {"users"}, allEntries = true)
     public void update(@Valid @RequestBody User user, @PathVariable int id) {
         log.info("update {} with id={}", user, id);
         assureIdConsistent(user, id);
@@ -70,15 +71,16 @@ public class AdminUserController extends AbstractUserController {
     }
 
     @GetMapping("/by-email")
-    public ResponseEntity<User> getByEmail(@RequestParam String email) {
+    public User getByEmail(@RequestParam String email) {
         log.info("getByEmail {}", email);
-        return ResponseEntity.of(repository.getByEmail(email));
+        return repository.getByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("User with email = %s not found", email)));
     }
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    @CacheEvict(cacheNames =  {"users"}, allEntries = true)
+    @CacheEvict(cacheNames = {"users"}, allEntries = true)
     public void enable(@PathVariable int id, @RequestParam boolean enabled) {
         log.info(enabled ? "enable {}" : "disable {}", id);
         User user = repository.getById(id);

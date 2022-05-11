@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,9 +24,8 @@ public class RestaurantService {
         this.repository = repository;
     }
 
-
-    public Optional<Restaurant> findById(int id) {
-        return repository.findById(id);
+    public Restaurant findById(int id) {
+        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException(String.format("Restaurant with id = %d not found", id)));
     }
 
     @Cacheable(cacheNames = {"restaurants"})

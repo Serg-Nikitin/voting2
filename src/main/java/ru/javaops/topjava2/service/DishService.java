@@ -7,12 +7,12 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.javaops.topjava2.error.IllegalRequestDataException;
 import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.repository.DishRepository;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.to.DishTo;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -39,13 +39,17 @@ public class DishService {
     public DishTo get(Integer restaurantId, Integer id) {
         return repository.findById(id)
                 .filter(dish -> restaurantId.equals(dish.getRestaurant().getId()))
-                .map(DishTo::new).orElseThrow(() -> new IllegalRequestDataException(String.format("Restaurant with id=%d don't have dish with id =%d", restaurantId, id)));
+                .map(DishTo::new).orElseThrow(() -> new EntityNotFoundException(String.format("Restaurant with id=%d don't have dish with id =%d", restaurantId, id)));
     }
 
     public Map<LocalDate, List<DishTo>> getAllMenu(int restaurantId) {
-        return findAll().stream()
+        Map<LocalDate, List<DishTo>> allMenu = findAll().stream()
                 .filter(dish -> dish.getRestaurant().id() == restaurantId)
                 .collect(Collectors.groupingBy(Dish::getDateOfServing, Collectors.mapping(DishTo::new, Collectors.toList())));
+        if (allMenu.size() == 0) {
+            throw new EntityNotFoundException(String.format("Restaurant's menu with id = %d not found", restaurantId));
+        }
+        return allMenu;
     }
 
     @Cacheable("dishes")

@@ -28,9 +28,9 @@ public class AdminRestaurantController {
     protected RestaurantService service;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Restaurant> get(@PathVariable int id) {
+    public Restaurant get(@PathVariable int id) {
         log.info("get {}", id);
-        return ResponseEntity.of(service.findById(id));
+        return service.findById(id);
     }
 
     @GetMapping
