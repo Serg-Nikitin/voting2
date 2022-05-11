@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.javaops.topjava2.service.VoteService;
-import ru.javaops.topjava2.to.voting.VotingTo;
+import ru.javaops.topjava2.to.VotingTo;
 
 import java.time.LocalDate;
 

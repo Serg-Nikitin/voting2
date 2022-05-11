@@ -23,11 +23,11 @@ public class UserTestData {
     public static final String ADMIN_MAIL = "admin@gmail.com";
 
     public static final User user = new User(USER_ID, "User", USER_MAIL, "password", Role.USER);
-    public static final User user1 = new User(USER_ID+2, "User1", USER1_MAIL, "password1", Role.USER);
-    public static final User user2 = new User(USER_ID+3, "User2", USER2_MAIL, "password2", Role.USER);
-    public static final User user3= new User(USER_ID+4, "User3", USER3_MAIL, "password3", Role.USER);
-    public static final User user4 = new User(USER_ID+5, "User4", USER4_MAIL, "password4", Role.USER);
-    public static final User user5= new User(USER_ID+6, "User5", USER5_MAIL, "password5", Role.USER);
+    public static final User user1 = new User(USER_ID + 2, "User1", USER1_MAIL, "password1", Role.USER);
+    public static final User user2 = new User(USER_ID + 3, "User2", USER2_MAIL, "password2", Role.USER);
+    public static final User user3 = new User(USER_ID + 4, "User3", USER3_MAIL, "password3", Role.USER);
+    public static final User user4 = new User(USER_ID + 5, "User4", USER4_MAIL, "password4", Role.USER);
+    public static final User user5 = new User(USER_ID + 6, "User5", USER5_MAIL, "password5", Role.USER);
 
     public static final User admin = new User(ADMIN_ID, "Admin", ADMIN_MAIL, "admin", Role.ADMIN, Role.USER);
 

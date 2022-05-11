@@ -8,7 +8,7 @@ import ru.javaops.topjava2.model.Vote;
 import ru.javaops.topjava2.repository.UserRepository;
 import ru.javaops.topjava2.repository.VoteRepository;
 import ru.javaops.topjava2.to.DishTo;
-import ru.javaops.topjava2.to.voting.VotingTo;
+import ru.javaops.topjava2.to.VotingTo;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

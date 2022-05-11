@@ -1,10 +1,9 @@
-package ru.javaops.topjava2.to.voting;
+package ru.javaops.topjava2.to;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.javaops.topjava2.model.Restaurant;
-import ru.javaops.topjava2.to.DishTo;
 
 import java.time.LocalDate;
 import java.util.List;

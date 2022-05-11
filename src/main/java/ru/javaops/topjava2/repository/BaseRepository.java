@@ -12,7 +12,6 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkModificati
 @NoRepositoryBean
 public interface BaseRepository<T> extends JpaRepository<T, Integer> {
 
-    //    https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query.spel-expressions
     @Transactional
     @Modifying
     @Query("DELETE FROM #{#entityName} u WHERE u.id=:id")

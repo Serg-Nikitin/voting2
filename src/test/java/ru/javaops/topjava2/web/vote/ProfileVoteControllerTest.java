@@ -74,7 +74,7 @@ class ProfileVoteControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_MATCHER.contentJson(voteUser,nextLastVoteUser,today));
+                .andExpect(VOTE_MATCHER.contentJson(voteUser, nextLastVoteUser, today));
     }
 
     @Test

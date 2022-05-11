@@ -4,7 +4,7 @@ import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.model.Vote;
 import ru.javaops.topjava2.to.DishTo;
-import ru.javaops.topjava2.to.voting.VotingTo;
+import ru.javaops.topjava2.to.VotingTo;
 import ru.javaops.topjava2.web.MatcherFactory;
 import ru.javaops.topjava2.web.dish.DishTestData;
 
