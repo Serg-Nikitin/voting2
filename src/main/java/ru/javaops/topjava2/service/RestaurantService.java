@@ -41,6 +41,7 @@ public class RestaurantService {
     }
 
     @CacheEvict(cacheNames = {"restaurants"}, allEntries = true)
+    @Transactional
     public Restaurant save(Restaurant restaurant) {
         return repository.save(restaurant);
     }

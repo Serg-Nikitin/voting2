@@ -76,5 +76,6 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(getUpdatedRestaurant())))
                 .andDo(print())
                 .andExpect(status().isNoContent());
+        RESTAURANT_MATCHER.assertMatch(repository.getById(RESTAURANT_ID), getUpdatedRestaurant());
     }
 }
