@@ -2,12 +2,13 @@ package ru.javaops.topjava2.service;
 
 import org.springframework.stereotype.Service;
 import ru.javaops.topjava2.error.IllegalRequestDataException;
+import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.model.Vote;
 import ru.javaops.topjava2.repository.UserRepository;
 import ru.javaops.topjava2.repository.VoteRepository;
 import ru.javaops.topjava2.to.DishTo;
-import ru.javaops.topjava2.to.VotingTo;
+import ru.javaops.topjava2.to.voting.VotingTo;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -15,8 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static ru.javaops.topjava2.util.DishUtil.convert;
 
 @Service
 public class VoteService {
@@ -59,7 +58,20 @@ public class VoteService {
         return repository.getUserVoteThisDay(date, userId);
     }
 
-    public Vote update(User user, Restaurant restaurant, int id, LocalDate nowDate) {
-        return repository.save(new Vote(id, nowDate, restaurant, user, true));
+    public VotingTo getVoting(LocalDate date) {
+        List<Vote> votes = repository.findAllOnDateVoting(date);
+
+        Map<Restaurant, List<DishTo>> menu = dishService.findAll().stream()
+                .filter(dish -> dish.getDateOfServing().compareTo(date) == 0)
+                .collect(Collectors.groupingBy(Dish::getRestaurant, Collectors.mapping(DishTo::new, Collectors.toList())));
+
+        Map<Restaurant, Long> rating = votes
+                .stream()
+                .collect(Collectors.groupingBy(Vote::getRestaurant, Collectors.counting()));
+        if (menu.keySet().size() != rating.keySet().size()) {
+            menu.keySet()
+                    .forEach(key -> rating.computeIfAbsent(key, k -> 0L));
+        }
+        return new VotingTo(date, rating, menu);
     }
 }

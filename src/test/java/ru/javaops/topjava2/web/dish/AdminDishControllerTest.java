@@ -12,11 +12,7 @@ import ru.javaops.topjava2.to.DishTo;
 import ru.javaops.topjava2.util.JsonUtil;
 import ru.javaops.topjava2.web.AbstractControllerTest;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -48,12 +44,8 @@ class AdminDishControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-        Map<LocalDate, List<DishTo>> map = JsonUtil.readMapValues(action.andReturn().getResponse().getContentAsString());
-        assertTrue(map.keySet().size() == dishesRestaurant.keySet().size());
-        for (Map.Entry<LocalDate, List<DishTo>> obj : map.entrySet()) {
-            LocalDate key = obj.getKey();
-            DISH_TO_MATCHER.assertMatch(obj.getValue(), dishesRestaurant.get(key));
-        }
+        String actual = action.andReturn().getResponse().getContentAsString();
+        assertEquals(actual, JsonUtil.writeValue(dishesRestaurant));
     }
 
     @Test

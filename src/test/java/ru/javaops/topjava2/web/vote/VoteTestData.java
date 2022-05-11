@@ -1,13 +1,18 @@
 package ru.javaops.topjava2.web.vote;
 
+import ru.javaops.topjava2.model.Dish;
+import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.model.Vote;
+import ru.javaops.topjava2.to.DishTo;
+import ru.javaops.topjava2.to.voting.VotingTo;
 import ru.javaops.topjava2.web.MatcherFactory;
+import ru.javaops.topjava2.web.dish.DishTestData;
 
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.*;
@@ -16,6 +21,23 @@ import static ru.javaops.topjava2.web.user.UserTestData.*;
 public class VoteTestData {
 
     public static final MatcherFactory.Matcher<Vote> VOTE_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Vote.class, "user.registered", "user.password");
+
+    public static LocalDate date = LocalDate.now();
+
+    public static VotingTo getVotingTo(LocalDate date) {
+        Map<Restaurant, Long> rating = listAll.stream()
+                .filter(v -> v.getDateVote().compareTo(date) == 0)
+                .collect(Collectors.groupingBy(Vote::getRestaurant, Collectors.counting()));
+        Map<Restaurant, List<DishTo>> menu = DishTestData.dishes
+                .stream()
+                .filter(d -> d.getDateOfServing().compareTo(date) == 0)
+                .collect(Collectors.groupingBy(Dish::getRestaurant, Collectors.mapping(DishTo::new, Collectors.toList())));
+
+        menu.keySet().forEach(r -> rating.computeIfAbsent(r, k -> 0L));
+
+        return new VotingTo(date, rating, menu);
+    }
+
     public static final int VOTE_ID = 1;
     public static final int VOTE_UPDATED = 15;
     public static final String DATE = LocalDate.now().toString();
@@ -49,7 +71,7 @@ public class VoteTestData {
     }
 
 
-    public static List<Vote> listAll = Arrays.asList(voteUser, nextLastVoteUser, voteAdmin, nextVoteAdmin, votU1, nextVotU1, votU2, nextVotU2, votU3, nextVotU3, votU4, nextVotU4, votU5, nextVotU5);
-    public static List<Vote> listUserVote = listAll.stream().filter(vote -> vote.getUser().getId().equals(USER_ID)).sorted(Comparator.comparing(Vote::getDateVote).reversed()).collect(Collectors.toList());
+    public static List<Vote> listAll = Arrays.asList(voteUser, nextLastVoteUser, voteAdmin, nextVoteAdmin, votU1, nextVotU1, votU2, nextVotU2, votU3, nextVotU3, votU4, nextVotU4, votU5, nextVotU5, today);
+
 
 }

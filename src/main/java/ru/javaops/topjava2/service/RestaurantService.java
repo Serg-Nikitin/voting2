@@ -6,7 +6,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.javaops.topjava2.error.NotFoundException;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 
@@ -16,7 +15,7 @@ import java.util.Optional;
 @Service
 @Transactional(readOnly = true)
 @Slf4j
-@CacheConfig(cacheNames = "restaurant")
+@CacheConfig(cacheNames = "restaurants")
 public class RestaurantService {
 
     private final RestaurantRepository repository;
@@ -30,22 +29,18 @@ public class RestaurantService {
         return repository.findById(id);
     }
 
-    public Restaurant getById(int id) {
-        return repository.getById(id);
-    }
-
-    @Cacheable
+    @Cacheable(cacheNames = {"restaurants"})
     public List<Restaurant> findAll() {
         log.info("getAll");
         return repository.findAll();
     }
 
-    @CacheEvict(allEntries = true)
+    @CacheEvict(cacheNames = {"restaurants"}, allEntries = true)
     public void deleteExisted(int id) {
         repository.deleteExisted(id);
     }
 
-    @CacheEvict(allEntries = true)
+    @CacheEvict(cacheNames = {"restaurants"}, allEntries = true)
     public Restaurant save(Restaurant restaurant) {
         return repository.save(restaurant);
     }

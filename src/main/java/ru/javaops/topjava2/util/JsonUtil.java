@@ -5,16 +5,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import lombok.experimental.UtilityClass;
-import ru.javaops.topjava2.to.DishTo;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import static ru.javaops.topjava2.util.DishUtil.convert;
 
 @UtilityClass
 public class JsonUtil {
@@ -30,24 +24,6 @@ public class JsonUtil {
             return reader.<T>readValues(json).readAll();
         } catch (IOException e) {
             throw new IllegalArgumentException("Invalid read array from JSON:\n'" + json + "'", e);
-        }
-    }
-
-    public static Map<LocalDate, List<DishTo>> readMapValues(String json) {
-        try {
-            Map<LocalDate, List<DishTo>> map = new HashMap<>();
-            Map<String, List<Map<String, Object>>> mapStr = mapper.readValue(json, Map.class);
-
-            for (Map.Entry<String, List<Map<String, Object>>> obj : mapStr.entrySet()) {
-                LocalDate key = convert(obj.getKey());
-                List<DishTo> value = obj.getValue().stream()
-                        .map(o -> new DishTo((int) o.get("id"), (String) o.get("name"), convert((String) o.get("dateOfServing")), (Double) o.get("price"))).collect(Collectors.toList());
-                map.put(key, value);
-            }
-            return map;
-
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Invalid read Map from JSON:\n'" + json + "'", e);
         }
     }
 

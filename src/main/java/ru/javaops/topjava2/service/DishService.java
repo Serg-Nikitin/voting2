@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javaops.topjava2.error.IllegalRequestDataException;
 import ru.javaops.topjava2.model.Dish;
-import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.DishRepository;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.to.DishTo;
@@ -26,7 +25,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 @Service
 @Transactional(readOnly = true)
 @Slf4j
-@CacheConfig(cacheNames = "dish")
+@CacheConfig(cacheNames = "dishes")
 public class DishService {
 
     private final DishRepository repository;
@@ -44,23 +43,22 @@ public class DishService {
     }
 
     public Map<LocalDate, List<DishTo>> getAllMenu(int restaurantId) {
-        return getAll().get(restaurantRepository.getById(restaurantId));
+        return findAll().stream()
+                .filter(dish -> dish.getRestaurant().id() == restaurantId)
+                .collect(Collectors.groupingBy(Dish::getDateOfServing, Collectors.mapping(DishTo::new, Collectors.toList())));
     }
 
-    @Cacheable
-    public Map<Restaurant, Map<LocalDate, List<DishTo>>> getAll() {
-        return repository.findAll(Sort.by("restaurant", "dateOfServing"))
-                .stream()
-                .collect(Collectors.groupingBy(Dish::getRestaurant, Collectors.groupingBy(Dish::getDateOfServing,
-                        Collectors.mapping(DishTo::new, Collectors.toList()))));
+    @Cacheable("dishes")
+    public List<Dish> findAll() {
+        return repository.findAll(Sort.by("dateOfServing", "restaurant"));
     }
 
-    @CacheEvict(allEntries = true)
+    @CacheEvict(cacheNames = "dishes", allEntries = true)
     public void delete(int restaurantId, int id) {
         checkAffiliation(restaurantId, id, repository.delete(restaurantId, id) == 0);
     }
 
-    @CacheEvict(allEntries = true)
+    @CacheEvict(cacheNames = "dishes", allEntries = true)
     @Transactional
     public void update(Integer restaurantId, DishTo dishTo, int id) {
         assureIdConsistent(dishTo, id);
@@ -69,7 +67,7 @@ public class DishService {
         repository.save(dish);
     }
 
-    @CacheEvict(allEntries = true)
+    @CacheEvict(cacheNames = "dishes", allEntries = true)
     @Transactional
     public DishTo create(int restaurantId, DishTo dishTo) {
         checkNew(dishTo);
