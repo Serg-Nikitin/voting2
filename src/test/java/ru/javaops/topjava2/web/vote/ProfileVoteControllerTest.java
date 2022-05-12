@@ -44,7 +44,7 @@ class ProfileVoteControllerTest extends AbstractControllerTest {
         aNew.setId(newId);
         aNew.setUser(admin);
         VOTE_MATCHER.assertMatch(created, aNew);
-        VOTE_MATCHER.assertMatch(service.getById(newId), aNew);
+        VOTE_MATCHER.assertMatch(service.findById(newId), aNew);
 
     }
 
@@ -58,7 +58,7 @@ class ProfileVoteControllerTest extends AbstractControllerTest {
                     .andDo(print())
                     .andExpect(status().isNoContent());
 
-            VOTE_MATCHER.assertMatch(service.getById(VOTE_UPDATED), updated);
+            VOTE_MATCHER.assertMatch(updated, service.findById(VOTE_UPDATED));
         } else {
             perform(MockMvcRequestBuilders.put(REST_URL + VOTE_UPDATED).contentType(MediaType.APPLICATION_JSON)
                     .content(JsonUtil.writeValue(updated)))

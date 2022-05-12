@@ -17,6 +17,7 @@ public class DishTestData {
     public static final MatcherFactory.Matcher<DishTo> DISH_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(DishTo.class);
 
     public static final int DISH_ID = 1;
+    public static final int DISH_ID_29 = 29;
 
     public static final Dish dish1 = new Dish(DISH_ID, "Форель жаренная", LocalDate.of(2022, Month.APRIL, 20), 14500, family);
     public static final Dish dish2 = new Dish(DISH_ID + 1, "Морская мелодия", LocalDate.of(2022, Month.APRIL, 20), 12000, georgia);
@@ -65,6 +66,6 @@ public class DishTestData {
     }
 
     public static Dish getUpdatedDish() {
-        return new Dish(DISH_ID, "Updated", LocalDate.now(), 25000, family);
+        return new Dish(DISH_ID_29, "Updated", LocalDate.now(), 25000, family);
     }
 }

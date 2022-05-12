@@ -52,12 +52,12 @@ class AdminDishControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = ADMIN_MAIL)
     public void update() throws Exception {
         DishTo updated = new DishTo(getUpdatedDish());
-        perform(MockMvcRequestBuilders.put(REST_URL + DISH_ID, RESTAURANT_ID)
+        perform(MockMvcRequestBuilders.put(REST_URL + DISH_ID_29, RESTAURANT_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        DISH_TO_MATCHER.assertMatch(service.get(RESTAURANT_ID, DISH_ID), new DishTo(getUpdatedDish()));
+        DISH_TO_MATCHER.assertMatch(service.get(RESTAURANT_ID, DISH_ID_29), new DishTo(getUpdatedDish()));
     }
 
     @Test

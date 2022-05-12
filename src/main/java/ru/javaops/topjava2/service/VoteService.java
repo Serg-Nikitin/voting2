@@ -47,8 +47,8 @@ public class VoteService {
         }
     }
 
-    public Vote getById(Integer voteId) {
-        return repository.getById(voteId);
+    public Vote findById(Integer voteId) {
+        return repository.findById(voteId).orElseThrow(() -> new EntityNotFoundException(String.format("vote with id = %d not found", voteId)));
     }
 
     public List<Vote> getAll(User user) {
