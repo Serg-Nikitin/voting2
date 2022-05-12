@@ -11,6 +11,7 @@ import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.repository.DishRepository;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.to.DishTo;
+import ru.javaops.topjava2.util.DishUtil;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
@@ -66,6 +67,7 @@ public class DishService {
     @Transactional
     public void update(Integer restaurantId, DishTo dishTo, int id) {
         assureIdConsistent(dishTo, id);
+        DishUtil.checkDishBelongOldMenu(repository.getById(id));
         Dish dish = new Dish(dishTo);
         dish.setRestaurant(restaurantRepository.getById(restaurantId));
         repository.save(dish);

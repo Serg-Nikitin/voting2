@@ -1,6 +1,7 @@
 package ru.javaops.topjava2.util;
 
 import ru.javaops.topjava2.error.IllegalRequestDataException;
+import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.to.DishTo;
 
@@ -13,9 +14,15 @@ import java.util.Map;
 public class DishUtil {
 
     public static void checkAffiliation(int restaurantId, int id, boolean check) {
-        String msg = String.format("dish with id=%d does not belong menu to the restaurant with id=%d", id, restaurantId);
         if (check) {
-            throw new IllegalRequestDataException(msg);
+            throw new IllegalRequestDataException(String.format("dish with id=%d does not belong menu to the restaurant with id=%d", id, restaurantId));
+        }
+    }
+
+    public static void checkDishBelongOldMenu(Dish dish) {
+        LocalDate date = LocalDate.now();
+        if (date.compareTo(dish.getDateOfServing()) > 0) {
+            throw new IllegalRequestDataException(String.format("It is forbidden update restaurant's dish from the old menu, date = %s", date));
         }
     }
 
@@ -42,10 +49,4 @@ public class DishUtil {
         LocalDate date = LocalDate.parse(value, formatter);
         return date;
     }
-
-    public static void main(String[] args) {
-        LocalDate date = convert("2022-04-20");
-        System.out.println("Local Date ++ " + date);
-    }
-
 }
