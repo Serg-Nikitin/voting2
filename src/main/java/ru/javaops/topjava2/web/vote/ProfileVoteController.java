@@ -48,16 +48,18 @@ public class ProfileVoteController {
     public void changeVote(@AuthenticationPrincipal AuthUser authUser, @Valid @RequestBody Vote vote, @PathVariable int voteId) {
         log.info("update {} with id={}", vote, voteId);
         assureIdConsistent(vote, voteId);
-        service.changeVote(authUser.id(), vote, voteId);
+        service.changeVote(authUser.id(), vote);
     }
 
     @GetMapping
     public List<Vote> getAll(@AuthenticationPrincipal AuthUser authUser) {
+        log.info("getAll vote with userId={}", authUser.getUser().getId());
         return service.getAll(authUser.getUser());
     }
 
     @GetMapping("/{date}")
     public Vote getVoteThisDay(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, @AuthenticationPrincipal AuthUser authUser) {
+        log.info("getVoteThisDay day={}", date);
         return service.getVoteThisDay(date, authUser.getUser());
     }
 }

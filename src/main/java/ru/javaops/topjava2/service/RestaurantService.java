@@ -25,6 +25,7 @@ public class RestaurantService {
     }
 
     public Restaurant findById(int id) {
+        log.info("findById with id = {}", id);
         return repository.findById(id).orElseThrow(() -> new EntityNotFoundException(String.format("Restaurant with id = %d not found", id)));
     }
 
@@ -36,12 +37,14 @@ public class RestaurantService {
 
     @CacheEvict(cacheNames = {"restaurants"}, allEntries = true)
     public void deleteExisted(int id) {
+        log.info("deleteExisted id = {}", id);
         repository.deleteExisted(id);
     }
 
     @CacheEvict(cacheNames = {"restaurants"}, allEntries = true)
     @Transactional
     public Restaurant save(Restaurant restaurant) {
+        log.info("save restaurant = {}", restaurant);
         return repository.save(restaurant);
     }
 }

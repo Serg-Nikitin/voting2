@@ -14,10 +14,7 @@ import ru.javaops.topjava2.to.DishTo;
 import ru.javaops.topjava2.util.DishUtil;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static ru.javaops.topjava2.util.DishUtil.checkAffiliation;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsistent;
@@ -38,34 +35,28 @@ public class DishService {
     }
 
     public DishTo get(Integer restaurantId, Integer id) {
+        log.info("get restaurantId = {}, dishId = {}", restaurantId, id);
         return repository.findById(id)
                 .filter(dish -> restaurantId.equals(dish.getRestaurant().getId()))
                 .map(DishTo::new).orElseThrow(() -> new EntityNotFoundException(String.format("Restaurant with id=%d don't have dish with id =%d", restaurantId, id)));
     }
 
-    public Map<LocalDate, List<DishTo>> getAllMenu(int restaurantId) {
-        Map<LocalDate, List<DishTo>> allMenu = findAll().stream()
-                .filter(dish -> dish.getRestaurant().id() == restaurantId)
-                .collect(Collectors.groupingBy(Dish::getDateOfServing, Collectors.mapping(DishTo::new, Collectors.toList())));
-        if (allMenu.size() == 0) {
-            throw new EntityNotFoundException(String.format("Restaurant's menu with id = %d not found", restaurantId));
-        }
-        return allMenu;
-    }
-
-    @Cacheable("dishes")
+    @Cacheable({"dishes"})
     public List<Dish> findAll() {
+        log.info("findAll");
         return repository.findAll(Sort.by("dateOfServing", "restaurant"));
     }
 
     @CacheEvict(cacheNames = "dishes", allEntries = true)
     public void delete(int restaurantId, int id) {
+        log.info("delete restaurantId = {}, dishId = {}", restaurantId, id);
         checkAffiliation(restaurantId, id, repository.delete(restaurantId, id) == 0);
     }
 
     @CacheEvict(cacheNames = "dishes", allEntries = true)
     @Transactional
     public void update(Integer restaurantId, DishTo dishTo, int id) {
+        log.info("update restaurantId = {}, data = {}, dishId = {}", restaurantId, dishTo, id);
         assureIdConsistent(dishTo, id);
         DishUtil.checkDishBelongOldMenu(repository.getById(id));
         Dish dish = new Dish(dishTo);
@@ -76,6 +67,7 @@ public class DishService {
     @CacheEvict(cacheNames = "dishes", allEntries = true)
     @Transactional
     public DishTo create(int restaurantId, DishTo dishTo) {
+        log.info("crete restaurantId = {} data = {}", restaurantId, dishTo);
         checkNew(dishTo);
         Dish dish = new Dish(dishTo);
         dish.setRestaurant(restaurantRepository.getById(restaurantId));

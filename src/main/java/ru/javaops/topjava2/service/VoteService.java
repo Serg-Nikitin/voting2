@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.javaops.topjava2.error.IllegalRequestDataException;
 import ru.javaops.topjava2.model.Dish;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class VoteService {
 
     private final VoteRepository repository;
@@ -32,11 +34,13 @@ public class VoteService {
     }
 
     public Vote voting(int userId, Vote vote) {
+        log.info("voting userId = {}, restaurantId = {}", userId, vote.getRestaurant().id());
         vote.setUser(userRepository.getById(userId));
         return repository.save(vote);
     }
 
-    public Vote changeVote(int userId, Vote vote, int voteId) {
+    public Vote changeVote(int userId, Vote vote) {
+        log.info("changeVote votId = {}", vote.id());
         LocalTime now = LocalTime.now();
         LocalTime to = LocalTime.of(11, 0);
         vote.setUser(userRepository.getById(userId));
@@ -48,16 +52,20 @@ public class VoteService {
     }
 
     public Vote findById(Integer voteId) {
+        log.info("findById votId = {}", voteId);
         return repository.findById(voteId).orElseThrow(() -> new EntityNotFoundException(String.format("vote with id = %d not found", voteId)));
     }
 
     public List<Vote> getAll(User user) {
+        log.info("getAll userId = {}", user.id());
         List<Vote> list = repository.getAllByUserId(user.id());
         list.forEach(v -> v.setUser(user));
         return list;
     }
 
     public Vote getVoteThisDay(LocalDate date, User user) {
+        log.info("getVoteThisDay date = {}, userId = {}", date, user.id());
+
         Vote vote = repository.getUserVoteThisDay(date, user.id())
                 .orElseThrow(() -> new EntityNotFoundException(String.format("You didn't vote that day = %s", date.toString())));
         vote.setUser(user);
@@ -65,6 +73,8 @@ public class VoteService {
     }
 
     public VotingTo getVoting(LocalDate date) {
+        log.info("getVoting date = {}", date);
+
         List<Vote> votes = repository.findAllOnDateVoting(date);
 
         Map<Restaurant, List<DishTo>> menu = dishService.findAll().stream()
