@@ -62,7 +62,7 @@ VALUES ('Форель жаренная', '2022-04-20', 14500, 1),
        ('Курник', now(), 78789, 1),
        ('Омлет', now(), 13698, 2);
 
-INSERT INTO VOTE(date_vote, restaurant_id, user_id)
+INSERT INTO VOTE(vote_date, restaurant_id, user_id)
 VALUES ('2022-04-20', 1, 1),
        ('2022-04-20', 4, 2),
        ('2022-04-20', 3, 3),

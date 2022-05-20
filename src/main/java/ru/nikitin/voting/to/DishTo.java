@@ -34,6 +34,6 @@ public class DishTo extends NamedTo implements HasId {
     }
 
     public DishTo(Dish dish) {
-        this(dish.getId(), dish.getName(), dish.getDateOfServing(), DishUtil.convert(dish.getPrice()));
+        this(dish.getId(), dish.getName(), dish.getServingDate(), DishUtil.convert(dish.getPrice()));
     }
 }

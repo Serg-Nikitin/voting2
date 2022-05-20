@@ -26,11 +26,11 @@ public class VoteTestData {
 
     public static VotingTo getVotingTo(LocalDate date) {
         Map<Restaurant, Long> rating = listAll.stream()
-                .filter(v -> v.getDateVote().compareTo(date) == 0)
+                .filter(v -> v.getVoteDate().compareTo(date) == 0)
                 .collect(Collectors.groupingBy(Vote::getRestaurant, Collectors.counting()));
         Map<Restaurant, List<DishTo>> menu = DishTestData.dishes
                 .stream()
-                .filter(d -> d.getDateOfServing().compareTo(date) == 0)
+                .filter(d -> d.getServingDate().compareTo(date) == 0)
                 .collect(Collectors.groupingBy(Dish::getRestaurant, Collectors.mapping(DishTo::new, Collectors.toList())));
 
         menu.keySet().forEach(r -> rating.computeIfAbsent(r, k -> 0L));

@@ -33,7 +33,7 @@ public class AdminDishController {
     }
 
     @GetMapping("/{id}")
-    public DishTo get(@PathVariable int restaurantId, @PathVariable int id) {
+    public DishTo get(@PathVariable Integer restaurantId, @PathVariable int id) {
         log.info("get dish id={} with restaurantId={}", id, restaurantId);
         return service.get(restaurantId, id);
     }
@@ -43,7 +43,7 @@ public class AdminDishController {
         log.info("getAllMenu restaurantId = {}", restaurantId);
         Map<LocalDate, List<DishTo>> allMenu = service.findAll().stream()
                 .filter(dish -> dish.getRestaurant().id() == restaurantId)
-                .collect(Collectors.groupingBy(Dish::getDateOfServing, Collectors.mapping(DishTo::new, Collectors.toList())));
+                .collect(Collectors.groupingBy(Dish::getServingDate, Collectors.mapping(DishTo::new, Collectors.toList())));
         if (allMenu.size() == 0) {
             throw new EntityNotFoundException(String.format("Restaurant's menu with id = %d not found", restaurantId));
         }
@@ -73,5 +73,10 @@ public class AdminDishController {
                 .buildAndExpand(restaurantId, created.getId()).toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
+/*
+    @GetMapping("/{date}")
+    public List<DishTo> getAllMenuOnDate(@PathVariable Integer restaurantId, @PathVariable LocalDate date){
+        log.info("getAllMenuOnDate restaurantId = {}, date = {}", restaurantId, date);
 
+    }*/
 }

@@ -1,7 +1,10 @@
 package ru.nikitin.voting.model;
 
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,18 +17,17 @@ import java.time.LocalDate;
 @Entity()
 @Getter
 @Setter
-@Table(indexes = {@Index(name = "vote_idx", columnList = "date_vote")},
-        uniqueConstraints = @UniqueConstraint(columnNames = {"date_vote", "restaurant_id", "user_id"}, name = "uk_vote"))
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = false)
+@Table(indexes = {@Index(name = "vote_idx", columnList = "vote_date")},
+        uniqueConstraints = @UniqueConstraint(columnNames = {"vote_date", "user_id"}, name = "uk_vote"))
+@ToString(callSuper = true, exclude = {"restaurant", "user"})
 @NoArgsConstructor
 public class Vote extends BaseEntity {
 
-    @Column(name = "date_vote")
+    @Column(name = "vote_date")
     @NotNull
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @Present
-    private LocalDate dateVote;
+    private LocalDate voteDate;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,13 +38,13 @@ public class Vote extends BaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    public Vote(LocalDate dateVote, Restaurant restaurant) {
-        this(null, dateVote, restaurant, null);
+    public Vote(LocalDate voteDate, Restaurant restaurant) {
+        this(null, voteDate, restaurant, null);
     }
 
-    public Vote(Integer id, LocalDate dateVote, Restaurant restaurant, User user) {
+    public Vote(Integer id, LocalDate voteDate, Restaurant restaurant, User user) {
         super(id);
-        this.dateVote = dateVote;
+        this.voteDate = voteDate;
         this.restaurant = restaurant;
         this.user = user;
     }

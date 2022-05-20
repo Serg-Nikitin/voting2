@@ -78,7 +78,7 @@ public class VoteService {
         List<Vote> votes = repository.findAllOnDateVoting(date);
 
         Map<Restaurant, List<DishTo>> menu = dishService.findAll().stream()
-                .filter(dish -> dish.getDateOfServing().compareTo(date) == 0)
+                .filter(dish -> dish.getServingDate().compareTo(date) == 0)
                 .collect(Collectors.groupingBy(Dish::getRestaurant, Collectors.mapping(DishTo::new, Collectors.toList())));
 
         Map<Restaurant, Long> rating = votes

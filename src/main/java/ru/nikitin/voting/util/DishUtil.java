@@ -21,7 +21,7 @@ public class DishUtil {
 
     public static void checkDishBelongOldMenu(Dish dish) {
         LocalDate date = LocalDate.now();
-        if (date.compareTo(dish.getDateOfServing()) > 0) {
+        if (date.compareTo(dish.getServingDate()) > 0) {
             throw new IllegalRequestDataException(String.format("It is forbidden update restaurant's dish from the old menu, date = %s", date));
         }
     }
@@ -46,7 +46,6 @@ public class DishUtil {
 
     public static LocalDate convert(String value) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate date = LocalDate.parse(value, formatter);
-        return date;
+        return LocalDate.parse(value, formatter);
     }
 }

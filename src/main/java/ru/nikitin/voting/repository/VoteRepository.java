@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface VoteRepository extends BaseRepository<Vote> {
 
     @Transactional
-    @Query("SELECT v FROM Vote v JOIN FETCH v.restaurant WHERE v.dateVote=:date AND v.user.id=:userId")
+    @Query("SELECT v FROM Vote v JOIN FETCH v.restaurant WHERE v.voteDate=:date AND v.user.id=:userId")
     Optional<Vote> getUserVoteThisDay(LocalDate date, int userId);
 
     @Query("SELECT v FROM Vote v JOIN FETCH v.restaurant WHERE v.user.id=:userId")
@@ -19,6 +19,6 @@ public interface VoteRepository extends BaseRepository<Vote> {
 
 
     @Transactional
-    @Query("SELECT v FROM  Vote v JOIN FETCH v.restaurant WHERE v.dateVote=:date")
+    @Query("SELECT v FROM  Vote v JOIN FETCH v.restaurant WHERE v.voteDate=:date")
     List<Vote> findAllOnDateVoting(LocalDate date);
 }
