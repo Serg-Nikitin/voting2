@@ -66,7 +66,7 @@ public class VoteService {
     public Vote getVoteThisDay(LocalDate date, User user) {
         log.info("getVoteThisDay date = {}, userId = {}", date, user.id());
 
-        Vote vote = repository.getUserVoteThisDay(date, user.id())
+        Vote vote = repository.getByUserIdAndDate(date, user.id())
                 .orElseThrow(() -> new EntityNotFoundException(String.format("You didn't vote that day = %s", date.toString())));
         vote.setUser(user);
         return vote;

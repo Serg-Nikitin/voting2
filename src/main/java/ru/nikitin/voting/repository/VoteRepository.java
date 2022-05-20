@@ -11,14 +11,15 @@ import java.util.Optional;
 public interface VoteRepository extends BaseRepository<Vote> {
 
     @Transactional
-    @Query("SELECT v FROM Vote v JOIN FETCH v.restaurant WHERE v.voteDate=:date AND v.user.id=:userId")
-    Optional<Vote> getUserVoteThisDay(LocalDate date, int userId);
+    @Query("SELECT v FROM Vote v WHERE v.voteDate=:date AND v.user.id=:userId")
+    Optional<Vote> getByUserIdAndDate(LocalDate date, int userId);
 
-    @Query("SELECT v FROM Vote v JOIN FETCH v.restaurant WHERE v.user.id=:userId")
+    @Transactional(readOnly = true)
+    @Query("SELECT v FROM Vote v WHERE v.user.id=:userId ORDER BY v.voteDate desc ")
     List<Vote> getAllByUserId(int userId);
 
 
     @Transactional
-    @Query("SELECT v FROM  Vote v JOIN FETCH v.restaurant WHERE v.voteDate=:date")
+    @Query("SELECT v FROM  Vote v WHERE v.voteDate=:date")
     List<Vote> findAllOnDateVoting(LocalDate date);
 }
