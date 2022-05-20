@@ -15,14 +15,14 @@ import java.time.LocalDate;
 
 @RestController
 @Slf4j
-@RequestMapping(value = MenuUIController.MENU_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-public class MenuUIController {
+@RequestMapping(value = ResultController.MENU_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+public class ResultController {
 
     private final VoteService service;
 
     public static final String MENU_URL = "/api/menu";
 
-    public MenuUIController(VoteService service) {
+    public ResultController(VoteService service) {
         this.service = service;
     }
 

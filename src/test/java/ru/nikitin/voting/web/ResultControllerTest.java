@@ -17,9 +17,9 @@ import static ru.nikitin.voting.web.vote.VoteTestData.date;
 import static ru.nikitin.voting.web.vote.VoteTestData.getVotingTo;
 
 @Slf4j
-class MenuUIControllerTest extends AbstractControllerTest {
+class ResultControllerTest extends AbstractControllerTest {
 
-    private static final String REST_URL = MenuUIController.MENU_URL + '/';
+    private static final String REST_URL = ResultController.MENU_URL + '/';
 
 
     @Test

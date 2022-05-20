@@ -56,7 +56,7 @@ public class VoteService {
         }
     }
 
-    public Vote findById(Integer voteId) {
+    public Vote findById(int voteId) {
         log.info("findById votId = {}", voteId);
         return repository.findById(voteId).orElseThrow(() -> new EntityNotFoundException(String.format("vote with id = %d not found", voteId)));
     }

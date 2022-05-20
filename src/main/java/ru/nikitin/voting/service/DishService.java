@@ -11,6 +11,7 @@ import ru.nikitin.voting.model.Dish;
 import ru.nikitin.voting.repository.DishRepository;
 import ru.nikitin.voting.repository.RestaurantRepository;
 import ru.nikitin.voting.to.DishTo;
+import ru.nikitin.voting.to.Menu;
 import ru.nikitin.voting.util.DishUtil;
 import ru.nikitin.voting.util.validation.ValidationUtil;
 
@@ -34,7 +35,7 @@ public class DishService {
         this.restaurantRepository = restaurantRepository;
     }
 
-    public DishTo get(Integer restaurantId, Integer id) {
+    public DishTo get(Integer restaurantId, int id) {
         log.info("get restaurantId = {}, dishId = {}", restaurantId, id);
         return repository.findById(id)
                 .filter(dish -> restaurantId.equals(dish.getRestaurant().getId()))
@@ -55,7 +56,7 @@ public class DishService {
 
     @CacheEvict(cacheNames = "dishes", allEntries = true)
     @Transactional
-    public void update(Integer restaurantId, DishTo dishTo, int id) {
+    public void update(int restaurantId, DishTo dishTo, int id) {
         log.info("update restaurantId = {}, data = {}, dishId = {}", restaurantId, dishTo, id);
         ValidationUtil.assureIdConsistent(dishTo, id);
         DishUtil.checkDishBelongOldMenu(repository.getById(id));
@@ -75,7 +76,15 @@ public class DishService {
         return new DishTo(returnDish);
     }
 
-    public List<DishTo> getRestaurantMenuOnDate(Integer restaurantId, LocalDate date) {
+    public List<DishTo> getRestaurantMenuOnDate(int restaurantId, LocalDate date) {
+        return null;
+    }
+
+    /**
+     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     */
+    public List<Menu> getAllMenu(int restaurantId) {
+        repository.findByRestaurantId(restaurantId);
         return null;
     }
 }

@@ -7,17 +7,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.nikitin.voting.model.Dish;
 import ru.nikitin.voting.service.DishService;
 import ru.nikitin.voting.to.DishTo;
+import ru.nikitin.voting.to.Menu;
 
-import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = AdminDishController.DISH_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -39,15 +36,9 @@ public class AdminDishController {
     }
 
     @GetMapping
-    public Map<LocalDate, List<DishTo>> getAllMenu(@PathVariable Integer restaurantId) {
+    public List<Menu> getAllMenu(@PathVariable Integer restaurantId) {
         log.info("getAllMenu restaurantId = {}", restaurantId);
-        Map<LocalDate, List<DishTo>> allMenu = service.findAll().stream()
-                .filter(dish -> dish.getRestaurant().id() == restaurantId)
-                .collect(Collectors.groupingBy(Dish::getServingDate, Collectors.mapping(DishTo::new, Collectors.toList())));
-        if (allMenu.size() == 0) {
-            throw new EntityNotFoundException(String.format("Restaurant's menu with id = %d not found", restaurantId));
-        }
-        return allMenu;
+        return service.getAllMenu(restaurantId);
     }
 
     @DeleteMapping("/{id}")
@@ -75,7 +66,7 @@ public class AdminDishController {
     }
 
     @GetMapping("/onDate")
-    public List<DishTo> getAllMenuOnDate(@PathVariable Integer restaurantId, @RequestParam LocalDate date) {
+    public List<DishTo> getAllMenuOnDate(@PathVariable int restaurantId, @RequestParam LocalDate date) {
         log.info("getAllMenuOnDate restaurantId = {}, date = {}", restaurantId, date);
         return service.getRestaurantMenuOnDate(restaurantId, date);
     }
