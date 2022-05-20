@@ -1,5 +1,6 @@
 package ru.nikitin.voting.service;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.nikitin.voting.error.IllegalRequestDataException;
@@ -19,21 +20,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static ru.nikitin.voting.util.ServiceUtil.checkNotFound;
+
 @Service
 @Slf4j
+@AllArgsConstructor
 public class VoteService {
 
     private final RestaurantService restaurantService;
     private final VoteRepository repository;
     private final UserRepository userRepository;
     private final DishService dishService;
-
-    public VoteService(RestaurantService restaurantService, VoteRepository repository, UserRepository userRepository, DishService dishService) {
-        this.restaurantService = restaurantService;
-        this.repository = repository;
-        this.userRepository = userRepository;
-        this.dishService = dishService;
-    }
 
     public Vote voting(int userId, int restaurantId) {
         log.info("voting userId = {}, restaurantId = {}", userId, restaurantId);
@@ -49,7 +46,7 @@ public class VoteService {
         Vote current = repository.getById(id);
         current.setRestaurant(restaurantService.getById(restaurantId));
         current.setUser(userRepository.getById(userId));
-        if (now.compareTo(to) <= 0) {
+        if (!now.isAfter(to)) {
             return repository.save(current);
         } else {
             throw new IllegalRequestDataException("You can't change your vote after 11:00");
@@ -58,7 +55,7 @@ public class VoteService {
 
     public Vote findById(int voteId) {
         log.info("findById votId = {}", voteId);
-        return repository.findById(voteId).orElseThrow(() -> new EntityNotFoundException(String.format("vote with id = %d not found", voteId)));
+        return checkNotFound(repository.findById(voteId), voteId);
     }
 
     public List<Vote> getAll(int userId) {
@@ -68,7 +65,7 @@ public class VoteService {
         return list;
     }
 
-    public Vote getVoteThisDay(LocalDate date, int userId) {
+    public Vote getVoteByDate(LocalDate date, int userId) {
         log.info("getVoteThisDay date = {}, userId = {}", date, userId);
 
         Vote vote = repository.getByUserIdAndDate(date, userId)

@@ -1,5 +1,6 @@
 package ru.nikitin.voting.service;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -8,38 +9,32 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.nikitin.voting.model.Dish;
+import ru.nikitin.voting.model.Restaurant;
 import ru.nikitin.voting.repository.DishRepository;
 import ru.nikitin.voting.repository.RestaurantRepository;
 import ru.nikitin.voting.to.DishTo;
 import ru.nikitin.voting.to.Menu;
-import ru.nikitin.voting.util.DishUtil;
-import ru.nikitin.voting.util.validation.ValidationUtil;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 
-import static ru.nikitin.voting.util.DishUtil.checkAffiliation;
+import static ru.nikitin.voting.util.ServiceUtil.*;
 
 @Service
 @Transactional(readOnly = true)
 @Slf4j
+@AllArgsConstructor
 @CacheConfig(cacheNames = "dishes")
 public class DishService {
 
     private final DishRepository repository;
     private final RestaurantRepository restaurantRepository;
 
-    public DishService(DishRepository repository, RestaurantRepository restaurantRepository) {
-        this.repository = repository;
-        this.restaurantRepository = restaurantRepository;
-    }
-
     public DishTo get(Integer restaurantId, int id) {
         log.info("get restaurantId = {}, dishId = {}", restaurantId, id);
-        return repository.findById(id)
+        return checkNotFound(repository.findById(id)
                 .filter(dish -> restaurantId.equals(dish.getRestaurant().getId()))
-                .map(DishTo::new).orElseThrow(() -> new EntityNotFoundException(String.format("Restaurant with id=%d don't have dish with id =%d", restaurantId, id)));
+                .map(DishTo::new), id);
     }
 
     @Cacheable({"dishes"})
@@ -58,10 +53,10 @@ public class DishService {
     @Transactional
     public void update(int restaurantId, DishTo dishTo, int id) {
         log.info("update restaurantId = {}, data = {}, dishId = {}", restaurantId, dishTo, id);
-        ValidationUtil.assureIdConsistent(dishTo, id);
-        DishUtil.checkDishBelongOldMenu(repository.getById(id));
+        checkDishBelongOldMenu(checkNotFound(repository.findById(id), id));
         Dish dish = new Dish(dishTo);
-        dish.setRestaurant(restaurantRepository.getById(restaurantId));
+        Restaurant restaurant = restaurantRepository.getById(restaurantId);
+        dish.setRestaurant(restaurant);
         repository.save(dish);
     }
 
@@ -69,7 +64,6 @@ public class DishService {
     @Transactional
     public DishTo create(int restaurantId, DishTo dishTo) {
         log.info("crete restaurantId = {} data = {}", restaurantId, dishTo);
-        ValidationUtil.checkNew(dishTo);
         Dish dish = new Dish(dishTo);
         dish.setRestaurant(restaurantRepository.getById(restaurantId));
         Dish returnDish = repository.save(dish);

@@ -54,8 +54,8 @@ public class ProfileVoteController {
     }
 
     @GetMapping("/onDate")
-    public Vote getVoteThisDay(@RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, @AuthenticationPrincipal AuthUser authUser) {
+    public Vote getVoteByDate(@RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, @AuthenticationPrincipal AuthUser authUser) {
         log.info("getVoteThisDay day={}", date);
-        return service.getVoteThisDay(date, authUser.id());
+        return service.getVoteByDate(date, authUser.id());
     }
 }

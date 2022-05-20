@@ -16,6 +16,9 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
+import static ru.nikitin.voting.util.validation.ValidationUtil.assureIdConsistent;
+import static ru.nikitin.voting.util.validation.ValidationUtil.checkNew;
+
 @RestController
 @RequestMapping(value = AdminDishController.DISH_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
@@ -51,12 +54,14 @@ public class AdminDishController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable int restaurantId, @Valid @RequestBody DishTo dishTo, @PathVariable int id) {
+        assureIdConsistent(dishTo, id);
         log.info("update with id={} restaurantId = {} and data ={}", id, restaurantId, dishTo);
         service.update(restaurantId, dishTo, id);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DishTo> create(@PathVariable int restaurantId, @Valid @RequestBody DishTo dishTo) {
+        checkNew(dishTo);
         log.info("create dish with restaurantId = {}, data = {}", restaurantId, dishTo);
         DishTo created = service.create(restaurantId, dishTo);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
