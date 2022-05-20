@@ -73,10 +73,10 @@ public class AdminDishController {
                 .buildAndExpand(restaurantId, created.getId()).toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
-/*
-    @GetMapping("/{date}")
-    public List<DishTo> getAllMenuOnDate(@PathVariable Integer restaurantId, @PathVariable LocalDate date){
-        log.info("getAllMenuOnDate restaurantId = {}, date = {}", restaurantId, date);
 
-    }*/
+    @GetMapping("/onDate")
+    public List<DishTo> getAllMenuOnDate(@PathVariable Integer restaurantId, @RequestParam LocalDate date) {
+        log.info("getAllMenuOnDate restaurantId = {}, date = {}", restaurantId, date);
+        return service.getRestaurantMenuOnDate(restaurantId, date);
+    }
 }

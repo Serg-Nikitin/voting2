@@ -15,6 +15,7 @@ import ru.nikitin.voting.util.DishUtil;
 import ru.nikitin.voting.util.validation.ValidationUtil;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.util.List;
 
 import static ru.nikitin.voting.util.DishUtil.checkAffiliation;
@@ -72,5 +73,9 @@ public class DishService {
         dish.setRestaurant(restaurantRepository.getById(restaurantId));
         Dish returnDish = repository.save(dish);
         return new DishTo(returnDish);
+    }
+
+    public List<DishTo> getRestaurantMenuOnDate(Integer restaurantId, LocalDate date) {
+        return null;
     }
 }

@@ -23,29 +23,34 @@ import java.util.stream.Collectors;
 @Slf4j
 public class VoteService {
 
+    private final RestaurantService restaurantService;
     private final VoteRepository repository;
     private final UserRepository userRepository;
     private final DishService dishService;
 
-    public VoteService(VoteRepository repository, UserRepository userRepository, DishService dishService) {
+    public VoteService(RestaurantService restaurantService, VoteRepository repository, UserRepository userRepository, DishService dishService) {
+        this.restaurantService = restaurantService;
         this.repository = repository;
         this.userRepository = userRepository;
         this.dishService = dishService;
     }
 
-    public Vote voting(int userId, Vote vote) {
-        log.info("voting userId = {}, restaurantId = {}", userId, vote.getRestaurant().id());
-        vote.setUser(userRepository.getById(userId));
-        return repository.save(vote);
+    public Vote voting(int userId, int restaurantId) {
+        log.info("voting userId = {}, restaurantId = {}", userId, restaurantId);
+        Restaurant restaurant = restaurantService.getById(restaurantId);
+        User user = userRepository.getById(userId);
+        return repository.save(new Vote(LocalDate.now(), restaurant, user));
     }
 
-    public Vote changeVote(int userId, Vote vote) {
-        log.info("changeVote votId = {}", vote.id());
+    public Vote changeVote(int userId, int restaurantId, int id) {
+        log.info("changeVote votId = {}", id);
         LocalTime now = LocalTime.now();
         LocalTime to = LocalTime.of(11, 0);
-        vote.setUser(userRepository.getById(userId));
+        Vote current = repository.getById(id);
+        current.setRestaurant(restaurantService.getById(restaurantId));
+        current.setUser(userRepository.getById(userId));
         if (now.compareTo(to) <= 0) {
-            return repository.save(vote);
+            return repository.save(current);
         } else {
             throw new IllegalRequestDataException("You can't change your vote after 11:00");
         }
@@ -56,19 +61,19 @@ public class VoteService {
         return repository.findById(voteId).orElseThrow(() -> new EntityNotFoundException(String.format("vote with id = %d not found", voteId)));
     }
 
-    public List<Vote> getAll(User user) {
-        log.info("getAll userId = {}", user.id());
-        List<Vote> list = repository.getAllByUserId(user.id());
-        list.forEach(v -> v.setUser(user));
+    public List<Vote> getAll(int userId) {
+        log.info("getAll userId = {}", userId);
+        List<Vote> list = repository.getAllByUserId(userId);
+        list.forEach(v -> v.setUser(userRepository.getById(userId)));
         return list;
     }
 
-    public Vote getVoteThisDay(LocalDate date, User user) {
-        log.info("getVoteThisDay date = {}, userId = {}", date, user.id());
+    public Vote getVoteThisDay(LocalDate date, int userId) {
+        log.info("getVoteThisDay date = {}, userId = {}", date, userId);
 
-        Vote vote = repository.getByUserIdAndDate(date, user.id())
+        Vote vote = repository.getByUserIdAndDate(date, userId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("You didn't vote that day = %s", date.toString())));
-        vote.setUser(user);
+        vote.setUser(userRepository.getById(userId));
         return vote;
     }
 

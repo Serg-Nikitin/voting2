@@ -29,6 +29,11 @@ public class RestaurantService {
         return repository.findById(id).orElseThrow(() -> new EntityNotFoundException(String.format("Restaurant with id = %d not found", id)));
     }
 
+    public Restaurant getById(int id) {
+        log.info("findById with id = {}", id);
+        return repository.getById(id);
+    }
+
     @Cacheable(cacheNames = {"restaurants"})
     public List<Restaurant> findAll() {
         log.info("getAll");
