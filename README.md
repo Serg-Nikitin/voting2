@@ -1,7 +1,7 @@
-Project: "Voting for restaurants" based on the [TopJava-2](https://javaops.ru/view/topjava2)
+Project: "Voting for restaurants" 
 ===============================
 -------------------------------------------------------------
-###Assignment for the graduation project:
+### Assignment for the graduation project:
 
 Design and implement a REST API using Hibernate/Spring/SpringMVC (or Spring-Boot) **without frontend**.
 
