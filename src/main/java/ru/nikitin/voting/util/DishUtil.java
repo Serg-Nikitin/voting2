@@ -20,20 +20,10 @@ public class DishUtil {
     }
 
     public static void checkDishBelongOldMenu(Dish dish) {
-        LocalDate date = LocalDate.now();
-        if (date.compareTo(dish.getServingDate()) > 0) {
-            throw new IllegalRequestDataException(String.format("It is forbidden update restaurant's dish from the old menu, date = %s", date));
+        LocalDate today = LocalDate.now();
+        if (today.isAfter(dish.getServingDate())) {
+            throw new IllegalRequestDataException(String.format("It is forbidden update restaurant's dish from the old menu, date = %s", today));
         }
-    }
-
-    public static Double convert(Integer value) {
-        Double result = value.doubleValue() / 100;
-        return result;
-    }
-
-    public static Integer convert(Double value) {
-        Double result = value * 100;
-        return result.intValue();
     }
 
     public static Map<Restaurant, List<DishTo>> convert(Map<Restaurant, Map<LocalDate, List<DishTo>>> map, LocalDate date) {

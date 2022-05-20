@@ -10,8 +10,6 @@ import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
-import static ru.nikitin.voting.util.DishUtil.convert;
-
 @Entity
 @Getter
 @Setter
@@ -38,7 +36,7 @@ public class Dish extends NamedEntity {
     }
 
     public Dish(DishTo dishTo) {
-        this(dishTo.getId(), dishTo.getName(), dishTo.getDateOfServing(), convert(dishTo.getPrice()));
+        this(dishTo.getId(), dishTo.getName(), dishTo.getDateOfServing(), dishTo.getPrice());
     }
 
     public Dish(Integer id, String name, LocalDate servingDate, Integer price, Restaurant restaurant) {
