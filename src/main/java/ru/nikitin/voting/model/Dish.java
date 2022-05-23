@@ -36,7 +36,7 @@ public class Dish extends NamedEntity {
     }
 
     public Dish(DishTo dishTo) {
-        this(dishTo.getId(), dishTo.getName(), dishTo.getDateOfServing(), dishTo.getPrice());
+        this(dishTo.getId(), dishTo.getName(), dishTo.getServingDate(), dishTo.getPrice());
     }
 
     public Dish(Integer id, String name, LocalDate servingDate, Integer price, Restaurant restaurant) {
@@ -45,5 +45,4 @@ public class Dish extends NamedEntity {
         this.price = price;
         this.restaurant = restaurant;
     }
-
 }

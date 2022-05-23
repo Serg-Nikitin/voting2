@@ -2,6 +2,7 @@ package ru.nikitin.voting.web.dish;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -9,13 +10,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.nikitin.voting.service.DishService;
 import ru.nikitin.voting.to.DishTo;
-import ru.nikitin.voting.to.Menu;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
+import static ru.nikitin.voting.util.ServiceUtil.checkAffiliation;
+import static ru.nikitin.voting.util.ServiceUtil.checkDishBelongOldMenu;
 import static ru.nikitin.voting.util.validation.ValidationUtil.assureIdConsistent;
 import static ru.nikitin.voting.util.validation.ValidationUtil.checkNew;
 
@@ -33,28 +35,30 @@ public class AdminDishController {
     }
 
     @GetMapping("/{id}")
-    public DishTo get(@PathVariable Integer restaurantId, @PathVariable int id) {
+    public DishTo get(@PathVariable int restaurantId, @PathVariable int id) {
         log.info("get dish id={} with restaurantId={}", id, restaurantId);
         return service.get(restaurantId, id);
     }
 
     @GetMapping
-    public List<Menu> getAllMenu(@PathVariable Integer restaurantId) {
+    public List<DishTo> getAllMenu(@PathVariable Integer restaurantId) {
         log.info("getAllMenu restaurantId = {}", restaurantId);
-        return service.getAllMenu(restaurantId);
+        return service.getAllByRestaurantId(restaurantId);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int restaurantId, @PathVariable int id) {
         log.info("delete with id={} and restaurantId={}", id, restaurantId);
-        service.delete(restaurantId, id);
+        checkAffiliation(restaurantId, id, service.delete(restaurantId, id) == 0);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable int restaurantId, @Valid @RequestBody DishTo dishTo, @PathVariable int id) {
         assureIdConsistent(dishTo, id);
+        checkAffiliation(restaurantId, id, dishTo.getRestaurantId() != restaurantId);
+        checkDishBelongOldMenu(dishTo);
         log.info("update with id={} restaurantId = {} and data ={}", id, restaurantId, dishTo);
         service.update(restaurantId, dishTo, id);
     }
@@ -70,9 +74,9 @@ public class AdminDishController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
-    @GetMapping("/onDate")
-    public List<DishTo> getAllMenuOnDate(@PathVariable int restaurantId, @RequestParam LocalDate date) {
+    @GetMapping("/byDate")
+    public List<DishTo> getMenuByRestaurantIdAndDate(@PathVariable int restaurantId, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         log.info("getAllMenuOnDate restaurantId = {}, date = {}", restaurantId, date);
-        return service.getRestaurantMenuOnDate(restaurantId, date);
+        return service.getMenuByRestaurantIdAndDate(restaurantId, date);
     }
 }

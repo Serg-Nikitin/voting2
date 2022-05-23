@@ -8,8 +8,9 @@ import ru.nikitin.voting.web.restaurant.RestaurantTestData;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class DishTestData {
@@ -56,9 +57,15 @@ public class DishTestData {
     public static final Dish dish34 = new Dish(DISH_ID + 33, "Омлет", LocalDate.now(), 13698, RestaurantTestData.georgia);
 
     public static List<Dish> dishes = Arrays.asList(dish1, dish2, dish3, dish4, dish5, dish6, dish7, dish8, dish9, dish10, dish11, dish12, dish13, dish14, dish15, dish16, dish17, dish18, dish19, dish20, dish21, dish22, dish23, dish24, dish25, dish26, dish27, dish28, dish29, dish30, dish31, dish32, dish33, dish34);
-    public static Map<LocalDate, List<DishTo>> dishesRestaurant = dishes.stream()
-            .filter(dish -> RestaurantTestData.RESTAURANT_ID.equals(dish.getRestaurant().getId()))
-            .collect(Collectors.groupingBy(Dish::getServingDate, Collectors.mapping(DishTo::new, Collectors.toList())));
+
+
+    public static List<DishTo> getDishesRestaurant(Predicate<Dish> predicate) {
+        return dishes.stream()
+                .filter(predicate)
+                .map(DishTo::getDishTo)
+                .sorted(Comparator.comparing(DishTo::getServingDate).reversed())
+                .collect(Collectors.toList());
+    }
 
     public static Dish getNewDish() {
         return new Dish(null, "New", LocalDate.now(), 15000, RestaurantTestData.family);

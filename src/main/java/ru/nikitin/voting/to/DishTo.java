@@ -17,20 +17,23 @@ import java.time.LocalDate;
 public class DishTo extends NamedTo implements HasId {
 
     @NotNull
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    @FutureOrPresent
-    LocalDate dateOfServing;
+    int price;
 
     @NotNull
-    Integer price;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @FutureOrPresent
+    LocalDate servingDate;
 
-    public DishTo(Integer id, String name, LocalDate dateOfServing, @NotNull Integer price) {
+    int restaurantId;
+
+    public DishTo(Integer id, String name, Integer price, LocalDate servingDate, int restaurantId) {
         super(id, name);
-        this.dateOfServing = dateOfServing;
         this.price = price;
+        this.servingDate = servingDate;
+        this.restaurantId = restaurantId;
     }
 
-    public DishTo(Dish dish) {
-        this(dish.getId(), dish.getName(), dish.getServingDate(), dish.getPrice());
+    public static DishTo getDishTo(Dish dish) {
+        return new DishTo(dish.getId(), dish.getName(), dish.getPrice(), dish.getServingDate(), dish.getRestaurant().id());
     }
 }

@@ -1,7 +1,6 @@
 package ru.nikitin.voting.util;
 
 import ru.nikitin.voting.error.IllegalRequestDataException;
-import ru.nikitin.voting.model.Dish;
 import ru.nikitin.voting.model.Restaurant;
 import ru.nikitin.voting.to.DishTo;
 
@@ -21,7 +20,7 @@ public class ServiceUtil {
         }
     }
 
-    public static void checkDishBelongOldMenu(Dish dish) {
+    public static void checkDishBelongOldMenu(DishTo dish) {
         LocalDate today = LocalDate.now();
         if (today.isAfter(dish.getServingDate())) {
             throw new IllegalRequestDataException(String.format("It is forbidden update restaurant's dish from the old menu, date = %s", today));
