@@ -1,16 +1,14 @@
 package ru.nikitin.voting.web.vote;
 
-import ru.nikitin.voting.model.Dish;
 import ru.nikitin.voting.model.Restaurant;
 import ru.nikitin.voting.model.Vote;
-import ru.nikitin.voting.to.DishTo;
-import ru.nikitin.voting.to.VotingTo;
+import ru.nikitin.voting.to.vote.VotingTo;
 import ru.nikitin.voting.web.MatcherFactory;
-import ru.nikitin.voting.web.dish.DishTestData;
 import ru.nikitin.voting.web.restaurant.RestaurantTestData;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -21,21 +19,18 @@ import static ru.nikitin.voting.web.user.UserTestData.*;
 public class VoteTestData {
 
     public static final MatcherFactory.Matcher<Vote> VOTE_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Vote.class, "user.registered", "user.password");
+    public static final MatcherFactory.Matcher<VotingTo> VOTING_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(VotingTo.class);
 
     public static LocalDate date = LocalDate.now();
 
-    public static VotingTo getVotingTo(LocalDate date) {
-        Map<Restaurant, Long> rating = listAll.stream()
-                .filter(v -> v.getVoteDate().compareTo(date) == 0)
-                .collect(Collectors.groupingBy(Vote::getRestaurant, Collectors.counting()));
-        Map<Restaurant, List<DishTo>> menu = DishTestData.dishes
-                .stream()
-                .filter(d -> d.getServingDate().compareTo(date) == 0)
-                .collect(Collectors.groupingBy(Dish::getRestaurant, Collectors.mapping(DishTo::new, Collectors.toList())));
+    public static List<VotingTo> getVotingTo(LocalDate date) {
 
-        menu.keySet().forEach(r -> rating.computeIfAbsent(r, k -> 0L));
-
-        return new VotingTo(date, rating, menu);
+        Map<Restaurant, Long> map = listAll.stream().filter(v -> v.getVoteDate().isEqual(date)).collect(Collectors.groupingBy(Vote::getRestaurant, Collectors.counting()));
+        List<VotingTo> list = new ArrayList<>();
+        for (Map.Entry<Restaurant, Long> o : map.entrySet()) {
+            list.add(new VotingTo(date, o.getKey(), o.getValue()));
+        }
+        return list;
     }
 
     public static final int VOTE_ID = 1;

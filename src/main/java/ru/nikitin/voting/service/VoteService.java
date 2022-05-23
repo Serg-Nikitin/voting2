@@ -4,21 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.nikitin.voting.error.IllegalRequestDataException;
-import ru.nikitin.voting.model.Dish;
 import ru.nikitin.voting.model.Restaurant;
 import ru.nikitin.voting.model.User;
 import ru.nikitin.voting.model.Vote;
 import ru.nikitin.voting.repository.UserRepository;
 import ru.nikitin.voting.repository.VoteRepository;
-import ru.nikitin.voting.to.DishTo;
-import ru.nikitin.voting.to.VotingTo;
+import ru.nikitin.voting.to.vote.VotingTo;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static ru.nikitin.voting.util.ServiceUtil.checkNotFound;
 
@@ -30,7 +26,7 @@ public class VoteService {
     private final RestaurantService restaurantService;
     private final VoteRepository repository;
     private final UserRepository userRepository;
-    private final DishService dishService;
+
 
     public Vote voting(int userId, int restaurantId) {
         log.info("voting userId = {}, restaurantId = {}", userId, restaurantId);
@@ -74,26 +70,8 @@ public class VoteService {
         return vote;
     }
 
-    public VotingTo getVoting(LocalDate date) {
+    public List<VotingTo> getVotingByDate(LocalDate date) {
         log.info("getVoting date = {}", date);
-
-        List<Vote> votes = repository.findAllOnDateVoting(date);
-
-        Map<Restaurant, List<DishTo>> menu = dishService.findAll().stream()
-                .filter(dish -> dish.getServingDate().compareTo(date) == 0)
-                .collect(Collectors.groupingBy(Dish::getRestaurant, Collectors.mapping(DishTo::new, Collectors.toList())));
-
-        Map<Restaurant, Long> rating = votes
-                .stream()
-                .collect(Collectors.groupingBy(Vote::getRestaurant, Collectors.counting()));
-        if (menu.keySet().size() != rating.keySet().size()) {
-            menu.keySet()
-                    .forEach(key -> rating.computeIfAbsent(key, k -> 0L));
-        }
-
-        if (rating.keySet().size() == 0) {
-            throw new EntityNotFoundException(String.format("Voting result for date = %s not found", date.toString()));
-        }
-        return new VotingTo(date, rating, menu);
+        return repository.getVotingByDate(date).getRating(date);
     }
 }
