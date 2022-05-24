@@ -21,7 +21,7 @@ public interface DishRepository extends BaseRepository<Dish> {
     @Query("SELECT new ru.nikitin.voting.to.DishTo(d.id,d.name,d.price,d.servingDate,d.restaurant.id) FROM Dish d  where d.restaurant.id=:restaurantId AND d.id=:id")
     Optional<DishTo> findById(int restaurantId, int id);
 
-    @Query("SELECT new ru.nikitin.voting.to.DishTo(d.id,d.name,d.price,d.servingDate,d.restaurant.id) FROM Dish d  where d.servingDate=:date GROUP BY d.servingDate, d.restaurant, d.id")
+    @Query("SELECT new ru.nikitin.voting.to.DishTo(d.id,d.name,d.price,d.servingDate,d.restaurant.id) FROM Dish d  where d.servingDate=:date GROUP BY d.servingDate, d.restaurant, d.id ORDER BY d.id")
     List<DishTo> getAllMenuByDate(LocalDate date);
 
 

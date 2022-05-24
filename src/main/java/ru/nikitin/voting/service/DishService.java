@@ -34,12 +34,6 @@ public class DishService {
         return checkNotFound(repository.findById(restaurantId, id), id);
     }
 
-    @Cacheable({"dishes"})
-    public List<DishTo> findAll() {
-        log.info("findAll");
-        return repository.findAllTo();
-    }
-
     @CacheEvict(cacheNames = "dishes", allEntries = true)
     public int delete(int restaurantId, int id) {
         log.info("delete restaurantId = {}, dishId = {}", restaurantId, id);
@@ -74,12 +68,8 @@ public class DishService {
         return repository.findMenuByRestaurantIdAndDate(restaurantId, date);
     }
 
-    /**
-     * for voting
-     */
+    @Cacheable("dishes")
     public List<DishTo> getAllByDate(LocalDate date) {
         return repository.getAllMenuByDate(date);
     }
-
-
 }

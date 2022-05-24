@@ -19,6 +19,30 @@ public class DishTestData {
     public static final int DISH_ID = 1;
     public static final int DISH_ID_29 = 29;
 
+    public static List<DishTo> getDishToByDate(LocalDate date) {
+        return dishes.stream()
+                .filter(d -> d.getServingDate().isEqual(date))
+                .map(DishTo::getDishTo)
+                .sorted(Comparator.comparing(DishTo::getId))
+                .collect(Collectors.toList());
+    }
+
+    public static List<DishTo> getDishesRestaurant(Predicate<Dish> predicate) {
+        return dishes.stream()
+                .filter(predicate)
+                .map(DishTo::getDishTo)
+                .sorted(Comparator.comparing(DishTo::getServingDate).reversed())
+                .collect(Collectors.toList());
+    }
+
+    public static Dish getNewDish() {
+        return new Dish(null, "New", LocalDate.now(), 15000, RestaurantTestData.family);
+    }
+
+    public static Dish getUpdatedDish() {
+        return new Dish(DISH_ID_29, "Updated", LocalDate.now(), 25000, RestaurantTestData.family);
+    }
+
     public static final Dish dish1 = new Dish(DISH_ID, "Форель жаренная", LocalDate.of(2022, Month.APRIL, 20), 14500, RestaurantTestData.family);
     public static final Dish dish2 = new Dish(DISH_ID + 1, "Морская мелодия", LocalDate.of(2022, Month.APRIL, 20), 12000, RestaurantTestData.georgia);
     public static final Dish dish3 = new Dish(DISH_ID + 2, "Стейк", LocalDate.of(2022, Month.APRIL, 20), 35000, RestaurantTestData.odessa);
@@ -59,19 +83,4 @@ public class DishTestData {
     public static List<Dish> dishes = Arrays.asList(dish1, dish2, dish3, dish4, dish5, dish6, dish7, dish8, dish9, dish10, dish11, dish12, dish13, dish14, dish15, dish16, dish17, dish18, dish19, dish20, dish21, dish22, dish23, dish24, dish25, dish26, dish27, dish28, dish29, dish30, dish31, dish32, dish33, dish34);
 
 
-    public static List<DishTo> getDishesRestaurant(Predicate<Dish> predicate) {
-        return dishes.stream()
-                .filter(predicate)
-                .map(DishTo::getDishTo)
-                .sorted(Comparator.comparing(DishTo::getServingDate).reversed())
-                .collect(Collectors.toList());
-    }
-
-    public static Dish getNewDish() {
-        return new Dish(null, "New", LocalDate.now(), 15000, RestaurantTestData.family);
-    }
-
-    public static Dish getUpdatedDish() {
-        return new Dish(DISH_ID_29, "Updated", LocalDate.now(), 25000, RestaurantTestData.family);
-    }
 }
