@@ -1,16 +1,12 @@
 package ru.nikitin.voting.util;
 
 import ru.nikitin.voting.error.IllegalRequestDataException;
-import ru.nikitin.voting.model.Restaurant;
 import ru.nikitin.voting.model.Vote;
 import ru.nikitin.voting.to.DishTo;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class ServiceUtil {
@@ -28,14 +24,6 @@ public class ServiceUtil {
         }
     }
 
-    public static Map<Restaurant, List<DishTo>> convert(Map<Restaurant, Map<LocalDate, List<DishTo>>> map, LocalDate date) {
-        Map<Restaurant, List<DishTo>> menu = new HashMap<>();
-        for (Map.Entry<Restaurant, Map<LocalDate, List<DishTo>>> element : map.entrySet()) {
-            menu.put(element.getKey(), element.getValue().get(date));
-        }
-        return menu;
-    }
-
     public static <T> T checkNotFound(Optional<T> optional, int id) {
         return optional.orElseThrow(() -> new EntityNotFoundException(String.format("Entity with id = %d not found", id)));
     }
@@ -46,8 +34,8 @@ public class ServiceUtil {
         return !now.isAfter(to);
     }
 
-    public static boolean checkDate(Vote to) {
+    public static boolean checkDate(Optional<Vote> to) {
         LocalDate date = LocalDate.now();
-        return date.isEqual(to.getVoteDate());
+        return date.isEqual(to.get().getVoteDate());
     }
 }

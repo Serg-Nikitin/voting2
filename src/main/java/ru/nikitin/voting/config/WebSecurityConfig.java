@@ -16,8 +16,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import ru.nikitin.voting.model.Role;
 import ru.nikitin.voting.model.User;
 import ru.nikitin.voting.repository.UserRepository;
-import ru.nikitin.voting.web.AuthUser;
 import ru.nikitin.voting.util.UserUtil;
+import ru.nikitin.voting.web.AuthUser;
 
 import java.util.Optional;
 

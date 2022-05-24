@@ -5,9 +5,7 @@ import lombok.*;
 import ru.nikitin.voting.util.validation.nohtml.NoHtml;
 
 import javax.persistence.Embeddable;
-import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Embeddable
@@ -24,25 +22,21 @@ public class Address {
     private String country;
 
     @NoHtml
-    @NotBlank
     @Size(min = 2, max = 100)
     private String district;
 
     @NoHtml
-    @NotBlank
     @Size(min = 2, max = 100)
     private String locality;
 
     @NoHtml
-    @NotBlank
     @Size(min = 2, max = 100)
     private String street;
 
     @NoHtml
-    @NotNull
     private String number;
 
-    public Address(String country, String district, String locality, String street, @NotNull String number) {
+    public Address(String country, String district, String locality, String street, String number) {
         this.country = country;
         this.district = district;
         this.locality = locality;

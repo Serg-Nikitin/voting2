@@ -15,6 +15,7 @@ import ru.nikitin.voting.to.vote.VotingTo;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static ru.nikitin.voting.util.ServiceUtil.*;
 
@@ -31,10 +32,10 @@ public class VoteService {
     @Transactional
     public VoteTo voting(int userId, int restaurantId) {
         log.info("voting userId = {}, restaurantId = {}", userId, restaurantId);
-        Vote voteById = repository.findLastVote(userId).getFirst();
-        if (checkDate(voteById)) {
+        Optional<Vote> voteById = repository.findFirstByUserIdOrderByIdDesc(userId);
+        if (voteById.isPresent() && checkDate(voteById)) {
             if (checkTime()) {
-                return save(userId, restaurantId, voteById);
+                return save(userId, restaurantId, voteById.get());
             } else {
                 throw new IllegalRequestDataException("You can't change your vote after 11:00");
             }

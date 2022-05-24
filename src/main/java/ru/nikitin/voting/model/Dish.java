@@ -6,7 +6,6 @@ import org.hibernate.annotations.OnDeleteAction;
 import ru.nikitin.voting.to.DishTo;
 
 import javax.persistence.*;
-import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
@@ -20,7 +19,6 @@ public class Dish extends NamedEntity {
 
     @NotNull
     @Column(name = "serving", nullable = false)
-    @FutureOrPresent
     private LocalDate servingDate;
 
     @Column(name = "price")

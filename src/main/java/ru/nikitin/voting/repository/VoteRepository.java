@@ -23,6 +23,5 @@ public interface VoteRepository extends BaseRepository<Vote> {
     @Query("SELECT v FROM Vote v  WHERE v.voteDate=:date")
     Votes getVotingByDate(LocalDate date);
 
-    @Query("SELECT v FROM Vote v WHERE v.user.id=:userId ORDER BY v.id DESC")
-    Votes findLastVote(int userId);
+    Optional<Vote> findFirstByUserIdOrderByIdDesc(int userId);
 }

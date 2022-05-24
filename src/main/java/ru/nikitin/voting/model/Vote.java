@@ -7,7 +7,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import ru.nikitin.voting.util.validation.present.Present;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -24,7 +23,6 @@ public class Vote extends BaseEntity {
 
     @Column(name = "vote_date")
     @NotNull
-    @Present
     private LocalDate voteDate;
 
     @NotNull
