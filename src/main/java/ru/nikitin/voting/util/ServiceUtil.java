@@ -2,11 +2,12 @@ package ru.nikitin.voting.util;
 
 import ru.nikitin.voting.error.IllegalRequestDataException;
 import ru.nikitin.voting.model.Restaurant;
+import ru.nikitin.voting.model.Vote;
 import ru.nikitin.voting.to.DishTo;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,13 +40,14 @@ public class ServiceUtil {
         return optional.orElseThrow(() -> new EntityNotFoundException(String.format("Entity with id = %d not found", id)));
     }
 
-    /**
-     * !!!!!!!!!!!!!!!!!!!!!!!!!
-     */
-    public static LocalDate convert(String value) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return LocalDate.parse(value, formatter);
+    public static boolean checkTime() {
+        LocalTime now = LocalTime.now();
+        LocalTime to = LocalTime.of(11, 0);
+        return !now.isAfter(to);
     }
 
-
+    public static boolean checkDate(Vote to) {
+        LocalDate date = LocalDate.now();
+        return date.isEqual(to.getVoteDate());
+    }
 }

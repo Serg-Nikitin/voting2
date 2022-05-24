@@ -7,7 +7,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.format.annotation.DateTimeFormat;
 import ru.nikitin.voting.util.validation.present.Present;
 
 import javax.persistence.*;
@@ -25,7 +24,6 @@ public class Vote extends BaseEntity {
 
     @Column(name = "vote_date")
     @NotNull
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @Present
     private LocalDate voteDate;
 
@@ -38,12 +36,8 @@ public class Vote extends BaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    public Vote(LocalDate voteDate, Restaurant restaurant) {
-        this(null, voteDate, restaurant, null);
-    }
-
-    public Vote(LocalDate voteDate, Restaurant restaurant, User user) {
-        this(null, voteDate, restaurant, user);
+    public Vote(LocalDate voteDate) {
+        this(null, voteDate, null, null);
     }
 
     public Vote(Integer id, LocalDate voteDate, Restaurant restaurant, User user) {
@@ -51,5 +45,11 @@ public class Vote extends BaseEntity {
         this.voteDate = voteDate;
         this.restaurant = restaurant;
         this.user = user;
+    }
+
+    public Vote set(Restaurant restaurant, User user) {
+        this.setRestaurant(restaurant);
+        this.setUser(user);
+        return this;
     }
 }

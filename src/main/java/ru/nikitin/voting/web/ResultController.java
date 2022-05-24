@@ -2,7 +2,6 @@ package ru.nikitin.voting.web;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +27,7 @@ public class ResultController {
     }
 
     @GetMapping("/byDate")
-    public List<VotingTo> getVoting(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public List<VotingTo> getVoting(@RequestParam LocalDate date) {
         log.info("getVoting date = {} ", date.toString());
         return service.getVotingByDate(date);
     }

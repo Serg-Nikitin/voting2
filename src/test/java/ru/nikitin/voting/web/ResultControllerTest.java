@@ -17,7 +17,6 @@ class ResultControllerTest extends AbstractControllerTest {
 
     private static final String REST_URL = ResultController.MENU_URL + '/';
 
-
     @Test
     @WithUserDetails(value = USER_MAIL)
     void getVoting() throws Exception {

@@ -3,50 +3,51 @@ package ru.nikitin.voting.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.nikitin.voting.error.IllegalRequestDataException;
 import ru.nikitin.voting.model.Restaurant;
-import ru.nikitin.voting.model.User;
 import ru.nikitin.voting.model.Vote;
 import ru.nikitin.voting.repository.UserRepository;
 import ru.nikitin.voting.repository.VoteRepository;
+import ru.nikitin.voting.to.vote.VoteTo;
 import ru.nikitin.voting.to.vote.VotingTo;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
-import static ru.nikitin.voting.util.ServiceUtil.checkNotFound;
+import static ru.nikitin.voting.util.ServiceUtil.*;
 
 @Service
 @Slf4j
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class VoteService {
 
     private final RestaurantService restaurantService;
     private final VoteRepository repository;
     private final UserRepository userRepository;
 
-
-    public Vote voting(int userId, int restaurantId) {
+    @Transactional
+    public VoteTo voting(int userId, int restaurantId) {
         log.info("voting userId = {}, restaurantId = {}", userId, restaurantId);
-        Restaurant restaurant = restaurantService.getById(restaurantId);
-        User user = userRepository.getById(userId);
-        return repository.save(new Vote(LocalDate.now(), restaurant, user));
+        Vote voteById = repository.findLastVote(userId).getFirst();
+        if (checkDate(voteById)) {
+            if (checkTime()) {
+                return save(userId, restaurantId, voteById);
+            } else {
+                throw new IllegalRequestDataException("You can't change your vote after 11:00");
+            }
+        } else {
+            return save(userId, restaurantId, new Vote(LocalDate.now()));
+        }
     }
 
-    public Vote changeVote(int userId, int restaurantId, int id) {
-        log.info("changeVote votId = {}", id);
-        LocalTime now = LocalTime.now();
-        LocalTime to = LocalTime.of(11, 0);
-        Vote current = repository.getById(id);
-        current.setRestaurant(restaurantService.getById(restaurantId));
-        current.setUser(userRepository.getById(userId));
-        if (!now.isAfter(to)) {
-            return repository.save(current);
-        } else {
-            throw new IllegalRequestDataException("You can't change your vote after 11:00");
-        }
+    public VoteTo save(int userId, int restaurantId, Vote vote) {
+        Restaurant restaurant = restaurantService.findById(restaurantId);
+        vote.set(restaurant, userRepository.getById(userId));
+        Vote newV = repository.save(vote);
+        return new VoteTo(newV.getId(), newV.getVoteDate(), restaurant);
     }
 
     public Vote findById(int voteId) {
@@ -54,20 +55,15 @@ public class VoteService {
         return checkNotFound(repository.findById(voteId), voteId);
     }
 
-    public List<Vote> getAll(int userId) {
+    public List<VoteTo> getAll(int userId) {
         log.info("getAll userId = {}", userId);
-        List<Vote> list = repository.getAllByUserId(userId);
-        list.forEach(v -> v.setUser(userRepository.getById(userId)));
-        return list;
+        return repository.getAllByUserId(userId).getTo();
     }
 
-    public Vote getVoteByDate(LocalDate date, int userId) {
+    public VoteTo getByDate(int userId, LocalDate date) {
         log.info("getVoteThisDay date = {}, userId = {}", date, userId);
-
-        Vote vote = repository.getByUserIdAndDate(date, userId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("You didn't vote that day = %s", date.toString())));
-        vote.setUser(userRepository.getById(userId));
-        return vote;
+        return new VoteTo(repository.getByUserIdAndDate(userId, date)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("You did not vote on this date = %s", date.toString()))));
     }
 
     public List<VotingTo> getVotingByDate(LocalDate date) {

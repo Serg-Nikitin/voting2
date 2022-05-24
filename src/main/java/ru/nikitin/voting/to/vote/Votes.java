@@ -21,6 +21,16 @@ public class Votes implements Streamable<Vote> {
 
     }
 
+    public List<VoteTo> getTo() {
+        return streamable.stream()
+                .map(VoteTo::new)
+                .collect(Collectors.toList());
+    }
+
+    public Vote getFirst() {
+        return streamable.iterator().next();
+    }
+
     @Override
     public Iterator<Vote> iterator() {
         return streamable.iterator();
