@@ -3,7 +3,6 @@ package ru.nikitin.voting.to;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
-import org.springframework.format.annotation.DateTimeFormat;
 import ru.nikitin.voting.HasId;
 import ru.nikitin.voting.model.Dish;
 
@@ -20,7 +19,6 @@ public class DishTo extends NamedTo implements HasId {
     int price;
 
     @NotNull
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @FutureOrPresent
     LocalDate servingDate;
 

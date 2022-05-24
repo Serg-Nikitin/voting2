@@ -2,7 +2,6 @@ package ru.nikitin.voting.web.dish;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -75,7 +74,7 @@ public class AdminDishController {
     }
 
     @GetMapping("/byDate")
-    public List<DishTo> getMenuByRestaurantIdAndDate(@PathVariable int restaurantId, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public List<DishTo> getMenuByRestaurantIdAndDate(@PathVariable int restaurantId, @RequestParam LocalDate date) {
         log.info("getAllMenuOnDate restaurantId = {}, date = {}", restaurantId, date);
         return service.getMenuByRestaurantIdAndDate(restaurantId, date);
     }
